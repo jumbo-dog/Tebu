@@ -13,7 +13,7 @@ import (
 
 func main() {
 	fmt.Println("Hello world")
-	session, err := discordgo.New("Bot " + getEnvValue("BOT_KEY"))
+	session, err := discordgo.New("Bot " + getEnvValue("BOT_TOKEN"))
 	if err != nil {
 		log.Fatal("Error starting a new instance of the bot", err)
 	}
