@@ -25,6 +25,10 @@ func MenuHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 								Name: "🎮",
 							},
 						},
+					},
+				},
+				discordgo.ActionsRow{
+					Components: []discordgo.MessageComponent{
 						discordgo.Button{
 							Label:    "Github",
 							Style:    discordgo.PrimaryButton,
