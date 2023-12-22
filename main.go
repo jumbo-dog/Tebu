@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 	global "tebu-discord/commands/global/menu"
+	functions "tebu-discord/functions"
 	helper "tebu-discord/helper/env"
 	service "tebu-discord/service"
 
@@ -27,11 +28,13 @@ func main() {
 	})
 	defer session.Close()
 
+	session.AddHandler(functions.MessageCreate)
+
 	session.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
 	err := session.Open()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error opening connection. Error: ", err)
 	}
 
 	session.AddHandler(global.StartMenu)
