@@ -7,31 +7,28 @@ import (
 	"os/signal"
 	"syscall"
 
+	functions "tebu-discord/functions"
+	helper "tebu-discord/helper/env"
+	service "tebu-discord/service"
+
 	"github.com/bwmarrin/discordgo"
-	"github.com/joho/godotenv"
+)
+
+var (
+	mainBotToken = "BOT_TOKEN"
+	testBotToken = "BOT_TOKEN_TEST"
 )
 
 func main() {
-	fmt.Println("Hello world")
-	session, err := discordgo.New("Bot " + getEnvValue("BOT_KEY"))
-	if err != nil {
-		log.Fatal("Error starting a new instance of the bot", err)
-	}
-	session.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
-		if m.Author.ID == s.State.User.ID {
-			return
-		}
-
-		if m.Content == "hello" {
-			s.ChannelMessageSend(m.ChannelID, "world")
-		}
-	})
+	services := service.NewSessionService(helper.GetEnvValue(mainBotToken))
+	session := services.StartSession()
+	session.AddHandler(functions.MessageCreate)
 
 	session.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
-	err = session.Open()
+	err := session.Open()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error opening connection. Error: ", err)
 	}
 	defer session.Close()
 	fmt.Println("The bot is online!")
@@ -39,14 +36,4 @@ func main() {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
-}
-
-func getEnvValue(key string) string {
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	return os.Getenv(key)
 }
