@@ -1,4 +1,4 @@
-package direct
+package guild
 
 import (
 	service "tebu-discord/service"

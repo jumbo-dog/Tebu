@@ -20,10 +20,10 @@ func MessageCreate(
 	}
 
 	if m.Content == "hello" {
-		s.ChannelMessage(m.ChannelID, "world")
+		s.ChannelMessageSend(m.ChannelID, "world")
 	}
 
-	if m.Content == "button" {
-		game.IncrementButton(s, m.ChannelID)
+	if m.Content == "plays" {
+		game.IncrementButton(s, m)
 	}
 }
