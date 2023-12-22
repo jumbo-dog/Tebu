@@ -14,7 +14,7 @@ type SessionService interface {
 	StartSession() *discordgo.Session
 }
 
-func NewSessionService(botToken string) SessionService {
+func New(botToken string) SessionService {
 	return &session{botToken: botToken}
 }
 func (s *session) StartSession() *discordgo.Session {

@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-
+	global "tebu-discord/commands/global/menu"
 	helper "tebu-discord/helper/env"
 	service "tebu-discord/service"
 
@@ -19,16 +18,23 @@ var (
 )
 
 func main() {
-	services := service.NewSessionService(helper.GetEnvValue(mainBotToken))
+	services := service.New(helper.GetEnvValue(mainBotToken))
+	global := global.New(services)
+
 	session := services.StartSession()
+	session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+		log.Println("Bot is up!")
+	})
+	defer session.Close()
+
 	session.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
 	err := session.Open()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer session.Close()
-	fmt.Println("The bot is online!")
+
+	session.AddHandler(global.StartMenu)
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
