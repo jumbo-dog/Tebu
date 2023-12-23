@@ -21,7 +21,7 @@ func New(botToken string) SessionService {
 func (s *session) StartSession() *discordgo.Session {
 	session, err := discordgo.New("Bot " + s.botToken)
 	if err != nil {
-		log.Fatal("Error starting a new process", err)
+		log.Fatalf("Error starting a new process: %s", err)
 	}
 	return session
 }

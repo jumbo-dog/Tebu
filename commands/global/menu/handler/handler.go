@@ -18,9 +18,9 @@ func MenuHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 					Components: []discordgo.MessageComponent{
 						discordgo.Button{
 							Label:    "Play game",
-							Style:    discordgo.SuccessButton,
+							Style:    discordgo.LinkButton,
 							Disabled: false,
-							CustomID: "main_menu_play",
+							URL:      "https://github.com/RyanQueirozS/Tebu",
 							Emoji: discordgo.ComponentEmoji{
 								Name: "🎮",
 							},
@@ -31,9 +31,9 @@ func MenuHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 					Components: []discordgo.MessageComponent{
 						discordgo.Button{
 							Label:    "Github",
-							Style:    discordgo.PrimaryButton,
+							Style:    discordgo.LinkButton,
 							Disabled: false,
-							CustomID: "main_menu_github",
+							URL:      "https://github.com/RyanQueirozS/Tebu",
 							Emoji: discordgo.ComponentEmoji{
 								Name: "💻",
 							},
@@ -45,8 +45,8 @@ func MenuHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 						discordgo.Button{
 							Label:    "Global ranking",
 							Style:    discordgo.LinkButton,
-							URL:      "https://www.youtube.com/watch?v=oiNPgJmtzVI",
 							Disabled: false,
+							URL:      "https://www.youtube.com/watch?v=oiNPgJmtzVI",
 							Emoji: discordgo.ComponentEmoji{
 								Name: "🏆",
 							},

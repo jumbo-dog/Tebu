@@ -9,7 +9,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-type Menu struct {
+type menu struct {
 	session service.SessionService
 }
 
@@ -18,7 +18,7 @@ type menuInterface interface {
 }
 
 func New(session service.SessionService) menuInterface {
-	return &Menu{
+	return &menu{
 		session: session,
 	}
 }
@@ -33,11 +33,13 @@ var (
 	commandsHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"menu": handler.MenuHandler,
 	}
+	created = false
 )
 
-func (m *Menu) StartMenu(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	if h, ok := commandsHandlers[i.ApplicationCommandData().Name]; ok {
+func (m *menu) StartMenu(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	if h, ok := commandsHandlers["menu"]; ok && created == false {
 		h(s, i)
+		created = true
 	}
 
 	cmdIDs := make(map[string]string, len(commands))
