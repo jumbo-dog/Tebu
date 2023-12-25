@@ -1,7 +1,7 @@
 package entity
 
 import (
-	gatherwood "tebu-discord/internal/functions/gatherButton"
+	gatherwood "tebu-discord/internal/components/gatherWood"
 
 	"github.com/bwmarrin/discordgo"
 )

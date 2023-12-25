@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/signal"
 
-	commandsdEntity "tebu-discord/internal/commands/entity"
-	componentsEntity "tebu-discord/internal/components"
+	commands "tebu-discord/internal/commands/entity"
+	components "tebu-discord/internal/components/entity"
 	helper "tebu-discord/internal/helper/env"
 
 	"github.com/bwmarrin/discordgo"
@@ -20,7 +20,7 @@ var (
 
 func init() {
 	var err error
-	s, err = discordgo.New("Bot " + helper.GetEnvValue(mainBotToken))
+	s, err = discordgo.New("Bot " + helper.GetEnvValue(mainBotToken, "../../.env"))
 	if err != nil {
 		log.Fatalf("Invalid bot parameters: %v", err)
 	}
@@ -35,17 +35,15 @@ func main() {
 		log.Fatalf("Cannot open the session: %v", err)
 	}
 
-	commandsdEntity.CreateSlashCommands(s)
-
+	commands.CreateSlashCommands(s)
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		switch i.Type {
 		case discordgo.InteractionApplicationCommand:
-			commandsdEntity.HandleSlashCommands(s, i)
+			commands.HandleSlashCommands(s, i)
 		case discordgo.InteractionMessageComponent:
-			componentsEntity.HandleComponents(s, i)
+			components.HandleComponents(s, i)
 		}
 	})
-
 	defer s.Close()
 
 	stop := make(chan os.Signal, 1)
@@ -53,7 +51,7 @@ func main() {
 	log.Println("Press Ctrl+C to exit")
 	<-stop
 
-	commandsdEntity.RemoveSlashCommands(s)
+	commands.RemoveSlashCommands(s)
 
 	// ** DELETE ALL COMMANDS **
 	// applications, err := s.ApplicationCommands(s.State.User.ID, "")
