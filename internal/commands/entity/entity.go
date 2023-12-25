@@ -5,6 +5,7 @@ import (
 	followup "tebu-discord/internal/commands/direct/game/followUp"
 	basiccomandfiles "tebu-discord/internal/commands/global/basic-command-files"
 	menu "tebu-discord/internal/commands/global/menu"
+	game "tebu-discord/internal/functions/gatherButton"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -23,24 +24,22 @@ var (
 			Name:        "menu",
 			Description: "Menu with the main options of the bot",
 		},
+		{
+			Name:        "play",
+			Description: "Play the game",
+		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"followups":                followup.FollowUp,
 		"basic-command-with-files": basiccomandfiles.BasicComandsFile,
 		"menu":                     menu.StartMenu,
+		"play":                     game.IncrementButton,
 	}
 	registeredCommands = make([]*discordgo.ApplicationCommand, len(commands))
-	created            = false
 )
 
-func SlashCommands(s *discordgo.Session) {
+func CreateSlashCommands(s *discordgo.Session) {
 	log.Println("Adding commands...")
-	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok && created == false {
-			h(s, i)
-			created = true
-		}
-	})
 	for i, v := range commands {
 		cmd, err := s.ApplicationCommandCreate(s.State.User.ID, "", v)
 		if err != nil {
@@ -59,4 +58,10 @@ func RemoveSlashCommands(s *discordgo.Session) {
 		}
 	}
 
+}
+
+func HandleSlashCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
+		h(s, i)
+	}
 }

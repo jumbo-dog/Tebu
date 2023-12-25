@@ -5,7 +5,8 @@ import (
 	"os"
 	"os/signal"
 
-	"tebu-discord/internal/commands/entity"
+	cmdEntity "tebu-discord/internal/commands/entity"
+	compEntity "tebu-discord/internal/components"
 	helper "tebu-discord/internal/helper/env"
 
 	"github.com/bwmarrin/discordgo"
@@ -34,8 +35,16 @@ func main() {
 		log.Fatalf("Cannot open the session: %v", err)
 	}
 
-	log.Println("Adding commands...")
-	entity.SlashCommands(s)
+	cmdEntity.CreateSlashCommands(s)
+
+	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		switch i.Type {
+		case discordgo.InteractionApplicationCommand:
+			cmdEntity.HandleSlashCommands(s, i)
+		case discordgo.InteractionMessageComponent:
+			compEntity.HandleComponents(s, i)
+		}
+	})
 
 	defer s.Close()
 
@@ -44,8 +53,7 @@ func main() {
 	log.Println("Press Ctrl+C to exit")
 	<-stop
 
-	log.Println("Removing commands...")
-	entity.RemoveSlashCommands(s)
+	cmdEntity.RemoveSlashCommands(s)
 
 	// ** DELETE ALL COMMANDS **
 	// applications, err := s.ApplicationCommands(s.State.User.ID, "")

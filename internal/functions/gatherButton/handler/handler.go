@@ -8,13 +8,7 @@ import (
 )
 
 var (
-	userChannel *discordgo.Channel
-	points      int
-	button      = discordgo.Button{
-		Label:    "Gather wood",
-		Style:    discordgo.SuccessButton,
-		CustomID: "button_quest0_01",
-	}
+	points int
 )
 
 func IncrementButtonHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -22,14 +16,18 @@ func IncrementButtonHandler(s *discordgo.Session, i *discordgo.InteractionCreate
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
-			Content: "Click the button below:\nWood: " + strconv.Itoa(points),
+			Content: "value: " + strconv.Itoa(points),
+			Flags:   discordgo.MessageFlagsEphemeral,
 			Components: []discordgo.MessageComponent{&discordgo.ActionsRow{
-				Components: []discordgo.MessageComponent{button},
+				Components: []discordgo.MessageComponent{discordgo.Button{
+					Label:    "Gather wood",
+					Style:    discordgo.SuccessButton,
+					CustomID: "button_quest0_01",
+				}},
 			}},
 		},
 	})
 	if err != nil {
 		log.Fatalf("Error creating increment button: %s", err)
-		s.ChannelMessageSend(userChannel.ID, "Error displaying message")
 	}
 }
