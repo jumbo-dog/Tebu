@@ -1,33 +1,33 @@
-package game
+package gatherwood
 
 import (
 	"log"
-	"tebu-discord/internal/functions/gatherButton/handler"
+	"strconv"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
-	button = discordgo.Button{
-		Label:    "Gather wood",
-		Style:    discordgo.SuccessButton,
-		CustomID: "button_quest0_01",
-	}
+	points int
 )
 
-func IncrementButton(s *discordgo.Session, m *discordgo.MessageCreate) {
-	userChannel, err := s.UserChannelCreate(m.Author.ID)
-	if err != nil {
-		s.ChannelMessageSend(userChannel.ID, "Error displaying message")
-		log.Fatalf("Error creating channel: %s", err)
-	}
-
-	s.ChannelMessageSendComplex(userChannel.ID, &discordgo.MessageSend{
-		Content: "Click the button below!",
-		Components: []discordgo.MessageComponent{
-			&discordgo.ActionsRow{
-				Components: []discordgo.MessageComponent{button},
+func GatherWoodButton(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	points++
+	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseUpdateMessage,
+		Data: &discordgo.InteractionResponseData{
+			Content: "value: " + strconv.Itoa(points),
+			Flags:   discordgo.MessageFlagsEphemeral,
+			Components: []discordgo.MessageComponent{&discordgo.ActionsRow{
+				Components: []discordgo.MessageComponent{discordgo.Button{
+					Label:    "Gather wood",
+					Style:    discordgo.SuccessButton,
+					CustomID: "button_quest0_01",
+				}},
 			}},
+		},
 	})
-	s.AddHandler(handler.IncrementButtonHandler)
+	if err != nil {
+		log.Fatalf("Error creating increment button: %s", err)
+	}
 }

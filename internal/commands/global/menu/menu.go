@@ -18,9 +18,9 @@ func StartMenu(s *discordgo.Session, i *discordgo.InteractionCreate) {
 					Components: []discordgo.MessageComponent{
 						discordgo.Button{
 							Label:    "Play game",
-							Style:    discordgo.LinkButton,
+							Style:    discordgo.SuccessButton,
 							Disabled: false,
-							URL:      "https://github.com/RyanQueirozS/Tebu",
+							CustomID: "button_quest0_01",
 							Emoji: discordgo.ComponentEmoji{
 								Name: "🎮",
 							},
