@@ -30,17 +30,10 @@ var (
 		"menu":                     menu.StartMenu,
 	}
 	registeredCommands = make([]*discordgo.ApplicationCommand, len(commands))
-	created            = false
 )
 
-func SlashCommands(s *discordgo.Session) {
+func CreateSlashCommands(s *discordgo.Session) {
 	log.Println("Adding commands...")
-	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok && created == false {
-			h(s, i)
-			created = true
-		}
-	})
 	for i, v := range commands {
 		cmd, err := s.ApplicationCommandCreate(s.State.User.ID, "", v)
 		if err != nil {
@@ -58,5 +51,10 @@ func RemoveSlashCommands(s *discordgo.Session) {
 			log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
 		}
 	}
+}
 
+func HandleSlashCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
+		h(s, i)
+	}
 }

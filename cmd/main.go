@@ -35,9 +35,15 @@ func main() {
 		log.Fatalf("Cannot open the session: %v", err)
 	}
 
-	log.Println("Adding commands...")
-	commands.SlashCommands(s)
-	components.ComponentsHandler(s)
+	commands.CreateSlashCommands(s)
+	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		switch i.Type {
+		case discordgo.InteractionApplicationCommand:
+			commands.HandleSlashCommands(s, i)
+		case discordgo.InteractionMessageComponent:
+			components.HandleComponents(s, i)
+		}
+	})
 	defer s.Close()
 
 	stop := make(chan os.Signal, 1)
@@ -45,7 +51,6 @@ func main() {
 	log.Println("Press Ctrl+C to exit")
 	<-stop
 
-	log.Println("Removing commands...")
 	commands.RemoveSlashCommands(s)
 
 	// ** DELETE ALL COMMANDS **
