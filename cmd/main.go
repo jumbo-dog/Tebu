@@ -5,7 +5,8 @@ import (
 	"os"
 	"os/signal"
 
-	"tebu-discord/internal/commands/entity"
+	commands "tebu-discord/internal/commands/entity"
+	components "tebu-discord/internal/components/entity"
 	helper "tebu-discord/internal/helper/env"
 
 	"github.com/bwmarrin/discordgo"
@@ -19,7 +20,7 @@ var (
 
 func init() {
 	var err error
-	s, err = discordgo.New("Bot " + helper.GetEnvValue(mainBotToken))
+	s, err = discordgo.New("Bot " + helper.GetEnvValue(mainBotToken, "../../.env"))
 	if err != nil {
 		log.Fatalf("Invalid bot parameters: %v", err)
 	}
@@ -35,8 +36,8 @@ func main() {
 	}
 
 	log.Println("Adding commands...")
-	entity.SlashCommands(s)
-
+	commands.SlashCommands(s)
+	components.ComponentsHandler(s)
 	defer s.Close()
 
 	stop := make(chan os.Signal, 1)
@@ -45,7 +46,7 @@ func main() {
 	<-stop
 
 	log.Println("Removing commands...")
-	entity.RemoveSlashCommands(s)
+	commands.RemoveSlashCommands(s)
 
 	// ** DELETE ALL COMMANDS **
 	// applications, err := s.ApplicationCommands(s.State.User.ID, "")
