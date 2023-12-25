@@ -51,7 +51,6 @@ func RemoveSlashCommands(s *discordgo.Session) {
 			log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
 		}
 	}
-
 }
 
 func HandleSlashCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {

@@ -1,14 +1,14 @@
 package entity
 
 import (
-	"tebu-discord/internal/functions/gatherButton/handler"
+	gatherwood "tebu-discord/internal/functions/gatherButton"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
 	componentsHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"button_quest0_01": handler.IncrementButtonHandler,
+		"button_quest0_01": gatherwood.GatherWoodButton,
 	}
 )
 
