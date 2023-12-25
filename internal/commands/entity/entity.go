@@ -5,7 +5,6 @@ import (
 	followup "tebu-discord/internal/commands/direct/game/followUp"
 	basiccomandfiles "tebu-discord/internal/commands/global/basic-command-files"
 	menu "tebu-discord/internal/commands/global/menu"
-	game "tebu-discord/internal/functions/gatherButton"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -24,16 +23,11 @@ var (
 			Name:        "menu",
 			Description: "Menu with the main options of the bot",
 		},
-		{
-			Name:        "play",
-			Description: "Play the game",
-		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"followups":                followup.FollowUp,
 		"basic-command-with-files": basiccomandfiles.BasicComandsFile,
 		"menu":                     menu.StartMenu,
-		"play":                     game.IncrementButton,
 	}
 	registeredCommands = make([]*discordgo.ApplicationCommand, len(commands))
 )
