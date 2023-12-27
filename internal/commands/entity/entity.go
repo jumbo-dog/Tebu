@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	followup "tebu-discord/internal/commands/direct/game/followUp"
-	basiccomandfiles "tebu-discord/internal/commands/global/basic-command-files"
 	menu "tebu-discord/internal/commands/global/menu"
 
 	"github.com/bwmarrin/discordgo"
@@ -26,9 +25,8 @@ var (
 		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"followups":                followup.FollowUp,
-		"basic-command-with-files": basiccomandfiles.BasicComandsFile,
-		"menu":                     menu.StartMenu,
+		"followups": followup.FollowUp,
+		"menu":      menu.StartMenu,
 	}
 	registeredCommands = make([]*discordgo.ApplicationCommand, len(commands))
 )

@@ -1,33 +1,27 @@
-package gatherwood
+package quests
 
 import (
 	"log"
-	"strconv"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-var (
-	points int
-)
-
-func GatherWoodButton(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	points++
+func generateQuest1(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
-			Content: "value: " + strconv.Itoa(points),
+			Content: "Release your primal instincts and break the roots of the tree",
 			Flags:   discordgo.MessageFlagsEphemeral,
 			Components: []discordgo.MessageComponent{&discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{discordgo.Button{
-					Label:    "Gather wood",
+					Label:    "Break the roots of the tree",
 					Style:    discordgo.SuccessButton,
-					CustomID: "button_quest0_01",
+					CustomID: "gather_wood_button",
 				}},
 			}},
 		},
 	})
 	if err != nil {
-		log.Fatalf("Error creating increment button: %s", err)
+		log.Fatalf("Error creating button: %v", err)
 	}
 }

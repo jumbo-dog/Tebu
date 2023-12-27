@@ -20,7 +20,7 @@ func StartMenu(s *discordgo.Session, i *discordgo.InteractionCreate) {
 							Label:    "Play game",
 							Style:    discordgo.SuccessButton,
 							Disabled: false,
-							CustomID: "button_quest0_01",
+							CustomID: "quest_generate",
 							Emoji: discordgo.ComponentEmoji{
 								Name: "🎮",
 							},
