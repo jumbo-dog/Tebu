@@ -6,6 +6,7 @@ import (
 	"os/signal"
 
 	config "tebu-discord/database/config"
+	"tebu-discord/database/controller/save"
 	commands "tebu-discord/internal/commands/entity"
 	components "tebu-discord/internal/components/entity"
 	helper "tebu-discord/internal/helper/env"
@@ -46,6 +47,10 @@ func main() {
 			components.HandleComponents(s, i)
 		}
 	})
+
+	save.GetSave(234)
+	save.GetSave(2335)
+
 	defer s.Close()
 
 	stop := make(chan os.Signal, 1)
