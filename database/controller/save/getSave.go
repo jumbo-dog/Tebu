@@ -31,6 +31,5 @@ func GetSave(discordId int64) *models.PlayerSave {
 		fmt.Printf("Error obtaining the save: %s", err)
 		return result
 	}
-	fmt.Println(result)
 	return result
 }

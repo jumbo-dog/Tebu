@@ -46,9 +46,8 @@ func main() {
 			components.HandleComponents(s, i)
 		}
 	})
-
+	
 	defer s.Close()
-
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	log.Println("Press Ctrl+C to exit")
