@@ -10,7 +10,12 @@ type PlayerSave struct {
 
 type Progress struct {
 	Planet Planet `bson:"planet"`
-	Quest  uint16 `bson:"quest"`
+	Quest  Quest  `bson:"quest"`
+}
+
+type Quest struct {
+	QuestNumber   uint16 `bson:"quest_number"`
+	QuestProgress uint8  `bson:"quest_progress"`
 }
 
 type Planet struct {
