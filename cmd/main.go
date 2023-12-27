@@ -6,7 +6,6 @@ import (
 	"os/signal"
 
 	config "tebu-discord/database/config"
-	saveInformation "tebu-discord/database/controller/save"
 	commands "tebu-discord/internal/commands/entity"
 	components "tebu-discord/internal/components/entity"
 	helper "tebu-discord/internal/helper/env"
@@ -39,7 +38,6 @@ func main() {
 
 	commands.CreateSlashCommands(s)
 	config.ConnectDatabase()
-	saveInformation.DeleteSave(235)
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		switch i.Type {
 		case discordgo.InteractionApplicationCommand:
