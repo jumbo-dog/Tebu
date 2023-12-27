@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 
+	config "tebu-discord/database/config"
 	commands "tebu-discord/internal/commands/entity"
 	components "tebu-discord/internal/components/entity"
 	helper "tebu-discord/internal/helper/env"
@@ -36,6 +37,7 @@ func main() {
 	}
 
 	commands.CreateSlashCommands(s)
+	config.ConnectDatabase()
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		switch i.Type {
 		case discordgo.InteractionApplicationCommand:
@@ -52,20 +54,7 @@ func main() {
 	<-stop
 
 	commands.RemoveSlashCommands(s)
-
-	// ** DELETE ALL COMMANDS **
-	// applications, err := s.ApplicationCommands(s.State.User.ID, "")
-	// if err != nil {
-	// 	fmt.Println("Error getting application commands:", err)
-	// 	return
-	// }
-
-	// for _, v := range applications {
-	// 	err := s.ApplicationCommandDelete(s.State.User.ID, "", v.ID)
-	// 	if err != nil {
-	// 		log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
-	// 	}
-	// }
+	config.DisconnectDatabase()
 
 	log.Println("Gracefully shutting down.")
 }
