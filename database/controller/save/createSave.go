@@ -21,10 +21,12 @@ func CreateSave(information *models.PlayerSave) {
 	_, err := db.Indexes().CreateOne(context.Background(), indexModel)
 	if err != nil {
 		fmt.Printf("Error creating unique index: %s", err)
+		return
 	}
 
 	_, err = db.InsertOne(context.Background(), information)
 	if err != nil {
 		fmt.Printf("Error creating new save: %s", err)
+		return
 	}
 }

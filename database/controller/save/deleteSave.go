@@ -17,5 +17,6 @@ func DeleteSave(discordId int64) {
 	_, err := db.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		fmt.Printf("Error updating save: %s", err)
+		return
 	}
 }
