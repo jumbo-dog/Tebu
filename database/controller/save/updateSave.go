@@ -11,7 +11,7 @@ import (
 
 // This does not update only one field, only full structs
 func UpdateSave(information *models.PlayerSave) {
-	if information.DiscordId == 0 {
+	if information.DiscordId == "" {
 		fmt.Printf("Discord id is obligatory:")
 		return
 	}

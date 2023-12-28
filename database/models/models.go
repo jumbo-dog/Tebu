@@ -1,7 +1,7 @@
 package models
 
 type PlayerSave struct {
-	DiscordId    uint64            `bson:"discord_id"`
+	DiscordId    string            `bson:"discord_id"`
 	LastUsername string            `bson:"last_username"`
 	Money        int64             `bson:"money"`
 	Resources    map[string]uint32 `bson:"resources"`

@@ -3,6 +3,7 @@ package gatherwood
 import (
 	"log"
 	"strconv"
+	"tebu-discord/database/models"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -11,7 +12,11 @@ var (
 	points int
 )
 
-func GatherWoodButton(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func GatherWoodButton(
+	s *discordgo.Session,
+	i *discordgo.InteractionCreate,
+	playerSave ...*models.PlayerSave,
+) {
 	points++
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,

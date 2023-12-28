@@ -1,17 +1,15 @@
-package quests
+package entity
 
 import (
-	"tebu-discord/database/models"
+	"tebu-discord/internal/game/quests"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
-	PlayerQuest models.Quest // NOTE: placeholder value, needs to get value from db
-
 	questsHandlers = map[uint16]func(*discordgo.Session, *discordgo.InteractionCreate){
-		0: generateQuest0,
-		1: generateQuest1,
+		0: quests.GenerateQuest,
+		1: quests.GenerateQuest1,
 	}
 )
 

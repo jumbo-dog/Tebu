@@ -2,16 +2,21 @@ package quests
 
 import (
 	"log"
+	"tebu-discord/database/models"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
-	progress = PlayerQuest.QuestProgress
+	progress uint8
 )
 
-func generateQuest0(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func GenerateQuest0(
+	s *discordgo.Session,
+	i *discordgo.InteractionCreate,
+	playerSave ...*models.PlayerSave,
+) {
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
@@ -37,6 +42,8 @@ func generateQuest0(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		Content: &paragraph2,
 	})
 
+	time.Sleep(time.Second * 1)
+
 	s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
 		Flags: discordgo.MessageFlagsEphemeral,
 		Components: []discordgo.MessageComponent{
@@ -52,7 +59,11 @@ func generateQuest0(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	})
 }
 
-func ButtonQuest0(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func ButtonQuest0(
+	s *discordgo.Session,
+	i *discordgo.InteractionCreate,
+	playerSave ...*models.PlayerSave,
+) {
 	var (
 		label    string
 		content  string
@@ -76,10 +87,22 @@ func ButtonQuest0(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	case 5:
 		label = "Advance"
 		content = "Scalling the towering tree, in a distance, you see other lonely trees, none as tall as the one you are in. The shrub land seemed to be getting denser the further away you look"
-		PlayerQuest.QuestNumber = 1
+
+		/*
+			        NOTE:DOESNT WORK
+						playerSave[0] = &models.PlayerSave{
+							Progress: models.Progress{
+								Quest: models.Quest{
+									QuestNumber: 1,
+								},
+							},
+						}
+						save.CreateSave(playerSave[0])
+		*/
+
 		customID = "quest_generate"
 	default:
-		label = "Error" // this is if a random value appears by a bug or whatever
+		label = "Error"
 		content = "Error"
 	}
 
