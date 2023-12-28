@@ -2,6 +2,7 @@ package quests
 
 import (
 	"log"
+	"tebu-discord/database/controller/save"
 	"tebu-discord/database/models"
 	"time"
 
@@ -70,6 +71,10 @@ func ButtonQuest0(
 		customID string = "quest0_Button"
 	)
 
+	cloudSave, err := save.GetSave(i.User.ID)
+	if err != nil {
+
+	}
 	progress++
 	switch progress {
 	case 1:
@@ -85,20 +90,11 @@ func ButtonQuest0(
 		label = "Climb tree"
 		content = "A majestic tall tree, rooted to the ever so green grass, you notice rocks shattered within it's roots, while fungi grows within the gap of the base of the tree and the soil."
 	case 5:
-		label = "Advance"
+		label = "Climb down"
 		content = "Scalling the towering tree, in a distance, you see other lonely trees, none as tall as the one you are in. The shrub land seemed to be getting denser the further away you look"
 
-		/*
-			        NOTE:DOESNT WORK
-						playerSave[0] = &models.PlayerSave{
-							Progress: models.Progress{
-								Quest: models.Quest{
-									QuestNumber: 1,
-								},
-							},
-						}
-						save.CreateSave(playerSave[0])
-		*/
+		cloudSave.Progress.Quest.QuestNumber = 1
+		save.UpdateSave(cloudSave)
 
 		customID = "quest_generate"
 	default:
@@ -106,7 +102,7 @@ func ButtonQuest0(
 		content = "Error"
 	}
 
-	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
 			Content: content,

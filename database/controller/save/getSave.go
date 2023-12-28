@@ -16,7 +16,7 @@ func GetSave(discordId string) (*models.PlayerSave, error) {
 		DiscordId: discordId,
 	}
 	if discordId == "" {
-		fmt.Printf("Discord id is obligatory:")
+		fmt.Printf("Discord id is obligatory:\n")
 		return result, nil
 	}
 	db := config.Collection
@@ -24,11 +24,11 @@ func GetSave(discordId string) (*models.PlayerSave, error) {
 
 	err := db.FindOne(context.Background(), filter).Decode(result)
 	if err == mongo.ErrNoDocuments {
-		fmt.Printf("Save not found: %s", err)
+		fmt.Printf("Save not found: %s\n", err)
 		return result, err
 	}
 	if err != nil {
-		fmt.Printf("Error obtaining the save: %s", err)
+		fmt.Printf("Error obtaining the save: %s\n", err)
 		return result, err
 	}
 	return result, nil

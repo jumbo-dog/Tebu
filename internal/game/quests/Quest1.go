@@ -15,12 +15,15 @@ func GenerateQuest1(
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
-			Content: "Release your primal instincts and break the roots of the tree",
+			Content: "You suddenly feel a primal urge to start a civilization, the next step should be obvious...",
 			Flags:   discordgo.MessageFlagsEphemeral,
 			Components: []discordgo.MessageComponent{&discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{discordgo.Button{
-					Label:    "Break the roots of the tree",
-					Style:    discordgo.SuccessButton,
+					Label: "Gather some sticks",
+					Style: discordgo.SuccessButton,
+					Emoji: discordgo.ComponentEmoji{
+						Name: "🪵",
+					},
 					CustomID: "gather_wood_button",
 				}},
 			}},

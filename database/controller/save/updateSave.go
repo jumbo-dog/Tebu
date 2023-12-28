@@ -12,7 +12,7 @@ import (
 // This does not update only one field, only full structs
 func UpdateSave(information *models.PlayerSave) {
 	if information.DiscordId == "" {
-		fmt.Printf("Discord id is obligatory:")
+		fmt.Printf("Discord id is obligatory:\n")
 		return
 	}
 	db := config.Collection
@@ -24,7 +24,7 @@ func UpdateSave(information *models.PlayerSave) {
 	}
 	_, err := db.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		fmt.Printf("Error updating save: %s", err)
+		fmt.Printf("Error updating save: %s\n", err)
 		return
 	}
 }

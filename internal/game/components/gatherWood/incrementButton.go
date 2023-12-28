@@ -1,7 +1,7 @@
 package gatherwood
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 	"tebu-discord/database/models"
 
@@ -25,14 +25,17 @@ func GatherWoodButton(
 			Flags:   discordgo.MessageFlagsEphemeral,
 			Components: []discordgo.MessageComponent{&discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{discordgo.Button{
-					Label:    "Gather wood",
-					Style:    discordgo.SuccessButton,
+					Label: "Gather some sticks",
+					Style: discordgo.SuccessButton,
+					Emoji: discordgo.ComponentEmoji{
+						Name: "🪵",
+					},
 					CustomID: "gather_wood_button",
 				}},
 			}},
 		},
 	})
 	if err != nil {
-		log.Fatalf("Error creating increment button: %v", err)
+		fmt.Printf("Error creating increment button: %v \n", err)
 	}
 }
