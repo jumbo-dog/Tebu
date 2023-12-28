@@ -7,8 +7,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func GetEnvValue(key string) string {
-	err := godotenv.Load("../../.env")
+func GetEnvValue(key string, relativePath string) string {
+	err := godotenv.Load(relativePath)
 	if err != nil {
 		log.Fatalf("Error loading .env file")
 	}

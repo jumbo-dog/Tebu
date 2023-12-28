@@ -5,7 +5,9 @@ import (
 	"os"
 	"os/signal"
 
-	"tebu-discord/internal/commands/entity"
+	config "tebu-discord/database/config"
+	commands "tebu-discord/internal/commands/entity"
+	components "tebu-discord/internal/game/components/entity"
 	helper "tebu-discord/internal/helper/env"
 
 	"github.com/bwmarrin/discordgo"
@@ -19,7 +21,7 @@ var (
 
 func init() {
 	var err error
-	s, err = discordgo.New("Bot " + helper.GetEnvValue(mainBotToken))
+	s, err = discordgo.New("Bot " + helper.GetEnvValue(mainBotToken, "../../.env"))
 	if err != nil {
 		log.Fatalf("Invalid bot parameters: %v", err)
 	}
@@ -27,39 +29,32 @@ func init() {
 
 func main() {
 	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
-		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
+		log.Printf("Logged in as: %v#%v\n", s.State.User.Username, s.State.User.Discriminator)
 	})
 	err := s.Open()
 	if err != nil {
 		log.Fatalf("Cannot open the session: %v", err)
 	}
 
-	log.Println("Adding commands...")
-	entity.SlashCommands(s)
+	commands.CreateSlashCommands(s)
+	config.ConnectDatabase()
+	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		switch i.Type {
+		case discordgo.InteractionApplicationCommand:
+			commands.HandleSlashCommands(s, i)
+		case discordgo.InteractionMessageComponent:
+			components.HandleComponents(s, i)
+		}
+	})
 
 	defer s.Close()
-
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	log.Println("Press Ctrl+C to exit")
 	<-stop
 
-	log.Println("Removing commands...")
-	entity.RemoveSlashCommands(s)
-
-	// ** DELETE ALL COMMANDS **
-	// applications, err := s.ApplicationCommands(s.State.User.ID, "")
-	// if err != nil {
-	// 	fmt.Println("Error getting application commands:", err)
-	// 	return
-	// }
-
-	// for _, v := range applications {
-	// 	err := s.ApplicationCommandDelete(s.State.User.ID, "", v.ID)
-	// 	if err != nil {
-	// 		log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
-	// 	}
-	// }
+	commands.RemoveSlashCommands(s)
+	config.DisconnectDatabase()
 
 	log.Println("Gracefully shutting down.")
 }
