@@ -11,25 +11,25 @@ import (
 )
 
 // This does not update only one field, only full structs
-func GetSave(discordId int64) *models.PlayerSave {
+func GetSave(discordId string) (*models.PlayerSave, error) {
 	result := &models.PlayerSave{
 		DiscordId: discordId,
 	}
-	if discordId == 0 {
-		fmt.Printf("Discord id is obligatory:")
-		return result
+	if discordId == "" {
+		fmt.Printf("Discord id is obligatory:\n")
+		return result, nil
 	}
 	db := config.Collection
 	filter := bson.M{"discord_id": discordId}
 
 	err := db.FindOne(context.Background(), filter).Decode(result)
 	if err == mongo.ErrNoDocuments {
-		fmt.Printf("Save not found: %s", err)
-		return result
+		fmt.Printf("Save not found: %s\n", err)
+		return result, err
 	}
 	if err != nil {
-		fmt.Printf("Error obtaining the save: %s", err)
-		return result
+		fmt.Printf("Error obtaining the save: %s\n", err)
+		return result, err
 	}
-	return result
+	return result, nil
 }

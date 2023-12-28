@@ -21,7 +21,7 @@ func ConnectDatabase() {
 	opts := options.Client().ApplyURI("mongodb+srv://" + helper.GetEnvValue("DATABASE_LOGIN", "../../.env") + ":" + helper.GetEnvValue("DATABASE_PASSWORD", "../../.env") + "@cluster0.iwwx7zx.mongodb.net/?retryWrites=true&w=majority").SetServerAPIOptions(serverAPI)
 	client, err = mongo.Connect(context.TODO(), opts)
 	if err != nil {
-		log.Fatalf("Error connecting to mongo: ", err)
+		log.Fatalf("Error connecting to mongo: %s", err)
 	}
 	Collection = client.Database("tebu").Collection("player-progress")
 	fmt.Println("Connected to MongoDB!")
@@ -30,6 +30,6 @@ func ConnectDatabase() {
 func DisconnectDatabase() {
 	fmt.Println("Disconnecting MongoDB")
 	if err = client.Disconnect(context.TODO()); err != nil {
-		log.Fatalf("Error disconnecting from mongo: ", err)
+		log.Fatalf("Error disconnecting from mongo: %s", err)
 	}
 }
