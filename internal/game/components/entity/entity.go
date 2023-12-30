@@ -4,7 +4,6 @@ import (
 	"tebu-discord/database/models"
 	"tebu-discord/internal/game/components/camp"
 	levelOneForest "tebu-discord/internal/game/components/levelOneForest"
-	"tebu-discord/internal/game/components/storeMaterials"
 	"tebu-discord/internal/game/quests"
 	entity "tebu-discord/internal/game/quests/entity"
 
@@ -18,9 +17,9 @@ var (
 		// Components
 		"gather_wood_button":     levelOneForest.LevelOneForest,
 		"gather_pebbles":         levelOneForest.LevelOneForest,
-		"goto_forest":            levelOneForest.LevelOneForest, // this is to avoid starting with 1
+		"goto_forest":            levelOneForest.LevelOneForest,
 		"goto_camp":              camp.GoToCamp,
-		"store_materials_button": storeMaterials.StoreMaterials,
+		"store_materials_button": camp.GoToCamp,
 		// Menu components
 		"quest_generate": entity.GenerateQuest,
 

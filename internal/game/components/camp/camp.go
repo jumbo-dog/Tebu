@@ -2,6 +2,7 @@ package camp
 
 import (
 	"fmt"
+	"tebu-discord/database/controller/save"
 	"tebu-discord/database/models"
 	"tebu-discord/internal/game/components/levelOneForest"
 
@@ -9,8 +10,8 @@ import (
 )
 
 var (
-	disableStore bool
-	hasResources string
+	disableStorage bool
+	hasResources   string
 )
 
 func GoToCamp(
@@ -18,10 +19,33 @@ func GoToCamp(
 	i *discordgo.InteractionCreate,
 	playerSave ...*models.PlayerSave,
 ) {
-	disableStore = false
-	if levelOneForest.Sticks+levelOneForest.Stones <= 0 {
-		disableStore = true
+	resources := levelOneForest.Sticks + levelOneForest.Stones
+	disableStorage = true
+	if resources > 0 {
+		disableStorage = false
 	}
+	if i.MessageComponentData().CustomID == "store_materials_button" {
+		lastSave, errSave := save.GetSave(i.User.ID)
+		if errSave != nil {
+			if errSave != nil {
+				fmt.Println("Error sending direct message:", errSave)
+			}
+			return
+		}
+		if lastSave.Resources == nil {
+			lastSave.Resources = make(map[string]uint32)
+		}
+		lastSave.Resources["wood"] += uint32(levelOneForest.Sticks)
+		lastSave.Resources["stone"] += uint32(levelOneForest.Stones)
+		save.UpdateSave(lastSave)
+		levelOneForest.Sticks = 0
+		levelOneForest.Stones = 0
+		levelOneForest.DisableSticks = false
+		levelOneForest.DisableStone = false
+		levelOneForest.MaxResources = ""
+		disableStorage = true
+	}
+
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
@@ -48,7 +72,7 @@ func GoToCamp(
 							Emoji: discordgo.ComponentEmoji{
 								Name: "📦",
 							},
-							Disabled: disableStore,
+							Disabled: disableStorage,
 							CustomID: "store_materials_button",
 						},
 					},
