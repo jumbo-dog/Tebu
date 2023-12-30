@@ -1,6 +1,7 @@
 package quests
 
 import (
+	"fmt"
 	"log"
 	"tebu-discord/database/controller/save"
 	"tebu-discord/database/models"
@@ -21,15 +22,15 @@ func GenerateQuest0(
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
-			Content: "Game started!",
+			Content: "Game started!\n *Remember: read the prompt and the button text*",
 			Flags:   discordgo.MessageFlagsEphemeral,
 		},
 	})
-
+	paragraph := "All of a sudden, a bright blue light comes shinning at your eyes, illuminating a canvas of clouds that dance in the skies to the most beautiful melody. The air hums in nature's sweet symphony, you catch the invigorating scent of fresh grass."
 	time.Sleep(time.Second * 1) // Value I found to be long enough to start quest but on to long
 	msg, err := s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
 		Flags:   discordgo.MessageFlagsEphemeral,
-		Content: "All of a sudden, a bright blue light comes shinning at your eyes, illuminating a canvas of clouds that dance in the skies to the most beautiful melody. The air hums in nature's sweet symphony, you catch the invigorating scent of fresh grass.",
+		Content: paragraph,
 	})
 	if err != nil {
 		log.Fatalf("Error creating follow up messsage: %v", err)
@@ -37,10 +38,10 @@ func GenerateQuest0(
 
 	time.Sleep(time.Second * 1)
 
-	paragraph2 := "All of a sudden, a bright blue light comes shinning at your eyes, illuminating a canvas of clouds that dance in the skies to the most beautiful melody. The air hums in nature's sweet symphony, you catch the invigorating scent of fresh grass.\nGetting up, the landscape unfolds before you, a vast expanse of lush green plains stretching beyond the horizon. The world flares out like a blank sheet of paper, inviting you to explore its mysteries and secrets."
+	paragraph = "All of a sudden, a bright blue light comes shinning at your eyes, illuminating a canvas of clouds that dance in the skies to the most beautiful melody. The air hums in nature's sweet symphony, you catch the invigorating scent of fresh grass.\nGetting up, the landscape unfolds before you, a vast expanse of lush green plains stretching beyond the horizon. The world flares out like a blank sheet of paper, inviting you to explore its mysteries and secrets."
 
 	s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
-		Content: &paragraph2,
+		Content: &paragraph,
 	})
 
 	time.Sleep(time.Second * 1)
@@ -73,9 +74,10 @@ func ButtonQuest0(
 
 	cloudSave, err := save.GetSave(i.User.ID)
 	if err != nil {
-
+		fmt.Printf("Unable to get save %s\n", err)
 	}
-	progress++
+	progress++ // We need to sync this with the db
+	cloudSave.Progress.Quest.QuestProgress = progress
 	switch progress {
 	case 1:
 		label = "Explore"
