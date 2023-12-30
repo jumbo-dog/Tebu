@@ -18,7 +18,8 @@ func GoToCamp(
 	i *discordgo.InteractionCreate,
 	playerSave ...*models.PlayerSave,
 ) {
-	if levelOneForest.Sticks+levelOneForest.Stones == 0 {
+	disableStore = false
+	if levelOneForest.Sticks+levelOneForest.Stones <= 0 {
 		disableStore = true
 	}
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
