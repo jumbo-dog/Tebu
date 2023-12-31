@@ -33,11 +33,8 @@ func LevelOneForest(
 
 	gatherResources("gather_wood_button", &Sticks, &DisableSticks, i)
 	gatherResources("gather_pebbles", &Stones, &DisableStone, i)
-
 	updateParagraph()
-
 	disableCamp = shouldDisableCamp(lastSave.Resources, Sticks, Stones)
-	fmt.Println("Disable camp:", disableCamp)
 
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
@@ -101,12 +98,12 @@ func gatherResources(customID string, resource *int, disableFlag *bool, i *disco
 }
 
 func updateParagraph() {
+	paragraph = "The trees surround you gently, you can feel the breeze passing through the forest"
 	if Sticks >= 20 || Stones >= 20 {
 		paragraph = "The darkened forest unsettles you, prompting a decision to turn back. The unease lingers as you retreat, contemplating a return with a torch"
-	} else if Sticks >= 12 || Stones >= 12 {
+	}
+	if Sticks >= 12 || Stones >= 12 {
 		paragraph = "The forest envelops you, a musky scent in the air. Strings of light filter through dense foliage. Each step feels like a venture into a realm alive with ancient secrets."
-	} else {
-		paragraph = "The trees surround you gently, you can feel the breeze passing through the forest"
 	}
 
 	if Sticks > 5 && maxPebbles == "" {
@@ -132,11 +129,11 @@ func updateParagraph() {
 }
 
 func shouldDisableCamp(resources map[string]uint32, Sticks int, Stones int) bool {
-	if resources != nil && resources["wood"] != 0 {
+	if resources != nil {
 		return false
 	}
-	if Sticks+Stones == 40 {
-		return false
+	if resources == nil {
+		return true
 	}
 	return true
 }

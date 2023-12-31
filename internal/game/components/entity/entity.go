@@ -3,6 +3,7 @@ package entity
 import (
 	"tebu-discord/database/models"
 	"tebu-discord/internal/game/components/camp"
+	"tebu-discord/internal/game/components/craft"
 	levelOneForest "tebu-discord/internal/game/components/levelOneForest"
 	"tebu-discord/internal/game/quests"
 	entity "tebu-discord/internal/game/quests/entity"
@@ -20,6 +21,8 @@ var (
 		"goto_forest":            levelOneForest.LevelOneForest,
 		"goto_camp":              camp.GoToCamp,
 		"store_materials_button": camp.GoToCamp,
+		"goto_craftbench":        craft.Craft,
+		"create_torch":           craft.Craft,
 		// Menu components
 		"quest_generate": entity.GenerateQuest,
 
