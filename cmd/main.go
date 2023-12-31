@@ -8,7 +8,7 @@ import (
 	config "tebu-discord/database/config"
 	commands "tebu-discord/internal/commands/entity"
 	components "tebu-discord/internal/game/components/entity"
-	helper "tebu-discord/internal/helper/env"
+	helper "tebu-discord/pkg/env"
 
 	"github.com/bwmarrin/discordgo"
 )
