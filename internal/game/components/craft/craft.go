@@ -25,7 +25,7 @@ func Craft(
 		fmt.Println("Error sending direct message:", errSave)
 		return
 	}
-	buyTorch(i, lastSave)
+	craftTorch(i, lastSave)
 	canCraft(lastSave)
 	isMaxResources(lastSave)
 	save.UpdateSave(lastSave)
@@ -89,7 +89,7 @@ func Craft(
 	}
 }
 
-func buyTorch(i *discordgo.InteractionCreate, lastSave *models.PlayerSave) {
+func craftTorch(i *discordgo.InteractionCreate, lastSave *models.PlayerSave) {
 	if i.MessageComponentData().CustomID == "create_torch" {
 		if lastSave.Items == nil {
 			lastSave.Items = make(map[string]uint16)
