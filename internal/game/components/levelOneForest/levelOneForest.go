@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"tebu-discord/database/controller/save"
 	"tebu-discord/database/models"
+	"tebu-discord/pkg/dialog"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -18,6 +19,7 @@ var (
 	maxSticks      string
 	maxPebbles     string
 	MaxResources   string
+	dialogs        = dialog.GetDialog("../../internal/questText/quest_001.json")
 )
 
 func LevelOneForest(
@@ -98,32 +100,32 @@ func gatherResources(customID string, resource *int, disableFlag *bool, i *disco
 }
 
 func updateParagraph() {
-	paragraph = "The trees surround you gently, you can feel the breeze passing through the forest"
-	if Sticks >= 20 || Stones >= 20 {
-		paragraph = "The darkened forest unsettles you, prompting a decision to turn back. The unease lingers as you retreat, contemplating a return with a torch"
-	}
+	paragraph = dialogs[0].DialogText[0]
 	if Sticks >= 12 || Stones >= 12 {
-		paragraph = "The forest envelops you, a musky scent in the air. Strings of light filter through dense foliage. Each step feels like a venture into a realm alive with ancient secrets."
+		paragraph = dialogs[1].DialogText[0]
+	}
+	if Sticks >= 20 || Stones >= 20 {
+		paragraph = dialogs[2].DialogText[0]
 	}
 
 	if Sticks > 5 && maxPebbles == "" {
-		maxSticks = "*(Your hands are getting tired, maybe there is a better way to do this)*"
+		maxSticks = dialogs[3].DialogText[0]
 	}
 	if Stones > 5 && maxSticks == "" {
-		maxPebbles = "*(Your hands are getting tired, maybe there is a better way to do this)*"
+		maxPebbles = dialogs[3].DialogText[0]
 	}
 
 	if Sticks == 20 && Stones < 20 {
-		maxSticks = "*(Your arms are getting heavy)*"
+		maxSticks = dialogs[4].DialogText[0]
 	}
 	if Stones == 20 && Sticks < 20 {
-		maxPebbles = "*(Your arms are getting heavy)*"
+		maxPebbles = dialogs[4].DialogText[0]
 	}
 
 	if Sticks == 20 && Stones == 20 {
 		maxSticks = ""
 		maxPebbles = ""
-		MaxResources = "*(You feel like one more flower would make you collapse)*"
+		MaxResources = dialogs[5].DialogText[0]
 		disableCamp = false
 	}
 }
