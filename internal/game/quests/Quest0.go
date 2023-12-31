@@ -25,7 +25,7 @@ func GenerateQuest0(
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
-			Content: "Game started!\n *Remember: read the prompt and the button text*",
+			Content: "Game started!\n **Remember: read the prompt and the button text**",
 			Flags:   discordgo.MessageFlagsEphemeral,
 		},
 	})
