@@ -26,7 +26,7 @@ func Craft(
 		return
 	}
 	buyTorch(i, lastSave)
-	canBuy(lastSave)
+	canCraft(lastSave)
 	isMaxResources(lastSave)
 	save.UpdateSave(lastSave)
 
@@ -101,7 +101,7 @@ func buyTorch(i *discordgo.InteractionCreate, lastSave *models.PlayerSave) {
 		lastSave.Resources["wood"] -= 10
 	}
 }
-func canBuy(lastSave *models.PlayerSave) {
+func canCraft(lastSave *models.PlayerSave) {
 	if lastSave.Resources == nil || lastSave.Resources["wood"] < 10 {
 		disableTorch = true
 	}
