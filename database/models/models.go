@@ -5,6 +5,7 @@ type PlayerSave struct {
 	LastUsername string            `bson:"last_username"`
 	Money        int64             `bson:"money"`
 	Resources    map[string]uint32 `bson:"resources"`
+	Items        map[string]uint16 `bson:"items"`
 	Progress     Progress          `bson:"progress"`
 }
 

@@ -2,23 +2,29 @@ package entity
 
 import (
 	"tebu-discord/database/models"
-	gatherwood "tebu-discord/internal/game/components/gatherWood"
+	"tebu-discord/internal/game/components/camp"
+	"tebu-discord/internal/game/components/craft"
+	levelOneForest "tebu-discord/internal/game/components/levelOneForest"
 	"tebu-discord/internal/game/quests"
-	generateQuest "tebu-discord/internal/game/quests/entity"
-	questEntity "tebu-discord/internal/game/quests/entity"
+	entity "tebu-discord/internal/game/quests/entity"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
-	playersave = questEntity.PlayerSave
+	playersave = entity.PlayerSave
 
 	componentsHandlers = map[string]func(*discordgo.Session, *discordgo.InteractionCreate, ...*models.PlayerSave){
 		// Components
-		"gather_wood_button": gatherwood.GatherWoodButton,
-
+		"gather_wood_button":     levelOneForest.LevelOneForest,
+		"gather_pebbles":         levelOneForest.LevelOneForest,
+		"goto_forest":            levelOneForest.LevelOneForest,
+		"goto_camp":              camp.GoToCamp,
+		"store_materials_button": camp.GoToCamp,
+		"goto_craftbench":        craft.Craft,
+		"create_torch":           craft.Craft,
 		// Menu components
-		"quest_generate": generateQuest.GenerateQuest,
+		"quest_generate": entity.GenerateQuest,
 
 		// Quests components
 		"quest0_Button": quests.ButtonQuest0,

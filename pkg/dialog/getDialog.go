@@ -8,8 +8,8 @@ import (
 	internalModels "tebu-discord/internal/models"
 )
 
-func GetDialog(title string) []internalModels.Dialog {
-	absPath, err := filepath.Abs("../../internal/json_files/" + title + ".json")
+func GetDialog(filePath string) []internalModels.Dialog {
+	absPath, err := filepath.Abs(filePath)
 	if err != nil {
 		fmt.Println("Error getting absolute file path:", err)
 	}
