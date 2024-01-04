@@ -83,10 +83,10 @@ func GoToCamp(
 func checkResourses(lastSave *models.PlayerSave) {
 	FullBackpackWood = ""
 	FullBackpackStone = ""
-	if lastSave.Resources["wood"] == 100 {
+	if lastSave.Resources["wood"] == 50 {
 		FullBackpackWood = " *(MAX)*"
 	}
-	if lastSave.Resources["stone"] == 100 {
+	if lastSave.Resources["stone"] == 50 {
 		FullBackpackStone = " *(MAX)*"
 	}
 	resources := levelOneForest.Sticks + levelOneForest.Stones
@@ -99,16 +99,16 @@ func isBiggerThanBackpack(lastSave *models.PlayerSave, SavedWood uint32, SavedSt
 	if lastSave.Resources == nil {
 		lastSave.Resources = make(map[string]uint32)
 	}
-	if lastSave.Resources != nil && int(SavedWood)+levelOneForest.Sticks < 100 {
+	if lastSave.Resources != nil && int(SavedWood)+levelOneForest.Sticks < 50 {
 		lastSave.Resources["wood"] += uint32(levelOneForest.Sticks)
 	} else {
-		lastSave.Resources["wood"] = 100
+		lastSave.Resources["wood"] = 50
 		FullBackpackWood = " *(MAX)*"
 	}
-	if lastSave.Resources != nil && int(SavedStone)+levelOneForest.Stones < 100 {
+	if lastSave.Resources != nil && int(SavedStone)+levelOneForest.Stones < 50 {
 		lastSave.Resources["stone"] += uint32(levelOneForest.Sticks)
 	} else {
-		lastSave.Resources["stone"] = 100
+		lastSave.Resources["stone"] = 50
 		FullBackpackStone = " *(MAX)*"
 	}
 }

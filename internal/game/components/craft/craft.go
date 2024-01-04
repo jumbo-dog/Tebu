@@ -107,10 +107,10 @@ func canCraft(lastSave *models.PlayerSave) {
 	}
 }
 func isMaxResources(lastSave *models.PlayerSave) {
-	if lastSave.Resources["wood"] < 100 {
+	if lastSave.Resources["wood"] < 50 {
 		camp.FullBackpackWood = ""
 	}
-	if lastSave.Resources["stone"] < 100 {
+	if lastSave.Resources["stone"] < 50 {
 		camp.FullBackpackStone = ""
 	}
 }
