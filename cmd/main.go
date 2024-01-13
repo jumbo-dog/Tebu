@@ -8,7 +8,6 @@ import (
 	config "tebu-discord/database/config"
 	commands "tebu-discord/internal/commands/entity"
 	components "tebu-discord/internal/game/components/entity"
-	helper "tebu-discord/pkg/env"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -16,12 +15,12 @@ import (
 var (
 	s            *discordgo.Session
 	mainBotToken = "BOT_TOKEN"
-	testBotToken = "BOT_TOKEN_TEST"
+	// testBotToken = "BOT_TOKEN_TEST"
 )
 
 func init() {
 	var err error
-	s, err = discordgo.New("Bot " + helper.GetEnvValue(mainBotToken, "../../.env"))
+	s, err = discordgo.New("Bot " + os.Getenv(mainBotToken))
 	if err != nil {
 		log.Fatalf("Invalid bot parameters: %v", err)
 	}

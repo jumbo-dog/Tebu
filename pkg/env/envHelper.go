@@ -10,7 +10,7 @@ import (
 func GetEnvValue(key string, relativePath string) string {
 	err := godotenv.Load(relativePath)
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Fatalf(err.Error())
 	}
 	if os.Getenv(key) == "" {
 		log.Fatalf("Env key is empty")

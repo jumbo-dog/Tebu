@@ -19,7 +19,7 @@ var (
 	maxSticks      string
 	maxPebbles     string
 	MaxResources   string
-	dialogs        = dialog.GetDialog("../../internal/questText/quest_001.json")
+	dialogs        = dialog.GetDialog("./questText/quest_001.json")
 )
 
 func LevelOneForest(

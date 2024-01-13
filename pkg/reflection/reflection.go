@@ -15,15 +15,15 @@ func AttributeValues(r, unit interface{}) {
 	unitToFillType := unitToFill.Type()
 
 	for i := 0; i < unitValue.NumField(); i++ {
-		consumerUnitName := unitType.Field(i).Name
+		srcName := unitType.Field(i).Name
 		srcFieldStructValue := unitValue.Field(i)
-		fieldToBeInserted := unitValue.FieldByName(consumerUnitName)
+		fieldToBeInserted := unitValue.FieldByName(srcName)
 
 		for i := 0; i < unitToFill.NumField(); i++ {
 			targetFieldName := unitToFillType.Field(i).Name
 			targetValue := unitToFill.Field(i)
 
-			if consumerUnitName == targetFieldName {
+			if srcName == targetFieldName {
 				switch targetValue.Kind() {
 				case reflect.String:
 					if srcFieldStructValue.String() == "" {
