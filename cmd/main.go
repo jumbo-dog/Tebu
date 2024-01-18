@@ -1,15 +1,23 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
+	"time"
 
 	config "tebu-discord/database/config"
 	commands "tebu-discord/internal/commands/entity"
 	components "tebu-discord/internal/game/components/entity"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/julienschmidt/httprouter"
 )
 
 var (
@@ -23,6 +31,36 @@ func init() {
 	s, err = discordgo.New("Bot " + os.Getenv(mainBotToken))
 	if err != nil {
 		log.Fatalf("Invalid bot parameters: %v", err)
+	}
+}
+
+func newRouter() *httprouter.Router {
+	mux := httprouter.New()
+	mux.GET("/live", getMatch())
+	return mux
+}
+
+type Team struct {
+	Score     int `json:"score"`
+	Kills     int `json:"kills"`
+	Deaths    int `json:"deaths"`
+	Damage    int `json:"dmg"`
+	Charges   int `json:"charges"`
+	Drops     int `json:"drops"`
+	FirstCaps int `json:"firstcaps"`
+	Caps      int `json:"caps"`
+}
+
+func getMatch() httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		yt := Team{
+			Score: 120,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(yt); err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -45,6 +83,39 @@ func main() {
 			components.HandleComponents(s, i)
 		}
 	})
+
+	srv := &http.Server{
+		Addr:    ":10101",
+		Handler: newRouter(),
+	}
+
+	idleConnsClosed := make(chan struct{})
+
+	go func() {
+		signit := make(chan os.Signal, 1)
+		signal.Notify(signit, os.Interrupt)
+		signal.Notify(signit, syscall.SIGTERM)
+		<-signit
+		fmt.Println("Server shutdown")
+
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+		defer cancel()
+
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Printf("http server shutdown error %v", err)
+		}
+
+		close(idleConnsClosed)
+
+	}()
+
+	if err := srv.ListenAndServe(); err != nil {
+		if !errors.Is(err, http.ErrServerClosed) {
+			log.Printf("fatal http server failed to start: %v", err)
+		}
+	}
+
+	<-idleConnsClosed
 
 	defer s.Close()
 	stop := make(chan os.Signal, 1)
