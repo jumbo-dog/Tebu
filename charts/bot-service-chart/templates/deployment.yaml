@@ -47,14 +47,14 @@ spec:
             httpGet:
               path: /live
               port: http
-            initialDelaySeconds: 120
-            periodSeconds: 120
+            initialDelaySeconds: 10
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /live
               port: http
-            initialDelaySeconds: 120
-            periodSeconds: 120
+            initialDelaySeconds: 10
+            periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}

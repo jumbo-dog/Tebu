@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"syscall"
 	"time"
 
 	config "tebu-discord/database/config"
@@ -91,23 +90,7 @@ func main() {
 
 	idleConnsClosed := make(chan struct{})
 
-	go func() {
-		signit := make(chan os.Signal, 1)
-		signal.Notify(signit, os.Interrupt)
-		signal.Notify(signit, syscall.SIGTERM)
-		<-signit
-		fmt.Println("Server shutdown")
-
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
-		defer cancel()
-
-		if err := srv.Shutdown(ctx); err != nil {
-			log.Printf("http server shutdown error %v", err)
-		}
-
-		close(idleConnsClosed)
-
-	}()
+	fmt.Println("Change")
 
 	if err := srv.ListenAndServe(); err != nil {
 		if !errors.Is(err, http.ErrServerClosed) {
@@ -115,14 +98,20 @@ func main() {
 		}
 	}
 
-	<-idleConnsClosed
-
 	defer s.Close()
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	log.Println("Press Ctrl+C to exit")
 	<-stop
+	<-idleConnsClosed
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	defer cancel()
 
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Printf("http server shutdown error %v", err)
+	}
+
+	close(idleConnsClosed)
 	commands.RemoveSlashCommands(s)
 	config.DisconnectDatabase()
 
