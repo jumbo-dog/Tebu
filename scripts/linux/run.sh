@@ -1,1 +1,1 @@
-docker run -it -p 10101:80 --env-file=../../.env tebubot
+docker run -it -p 80:10101 --env-file=../../.env tebubot

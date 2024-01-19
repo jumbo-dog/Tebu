@@ -39,11 +39,8 @@ func Craft(
 				&discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
 						discordgo.Button{
-							Label: "Torch",
-							Style: discordgo.SuccessButton,
-							Emoji: discordgo.ComponentEmoji{
-								Name: "🔥",
-							},
+							Label:    "Torch",
+							Style:    discordgo.SuccessButton,
 							Disabled: disableTorch,
 							CustomID: "create_torch",
 						},

@@ -33,7 +33,7 @@ func StartMenu(s *discordgo.Session, i *discordgo.InteractionCreate) {
 							Label:    "Github",
 							Style:    discordgo.LinkButton,
 							Disabled: false,
-							URL:      "https://github.com/RyanQueirozS/Tebu",
+							URL:      "https://github.com/jumbo-dog/Tebu",
 							Emoji: discordgo.ComponentEmoji{
 								Name: "💻",
 							},
