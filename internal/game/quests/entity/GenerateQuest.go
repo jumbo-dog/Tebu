@@ -36,7 +36,7 @@ func GenerateQuest(
 	if err != nil && err != mongo.ErrNoDocuments {
 		log.Fatalf("Error generating quest: %v", err)
 	}
-
+	questNumber = PlayerSave.Progress.Quest.QuestNumber
 	if h, ok := questsHandlers[questNumber]; ok {
 		h(s, i, PlayerSave)
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -35,29 +34,22 @@ func init() {
 
 func newRouter() *httprouter.Router {
 	mux := httprouter.New()
-	mux.GET("/live", getMatch())
+	mux.GET("/live", statusCheck())
 	return mux
 }
 
-type Team struct {
-	Score     int `json:"score"`
-	Kills     int `json:"kills"`
-	Deaths    int `json:"deaths"`
-	Damage    int `json:"dmg"`
-	Charges   int `json:"charges"`
-	Drops     int `json:"drops"`
-	FirstCaps int `json:"firstcaps"`
-	Caps      int `json:"caps"`
+type Live struct {
+	IsLive bool `json:"islive"`
 }
 
-func getMatch() httprouter.Handle {
+func statusCheck() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		yt := Team{
-			Score: 120,
+		live := Live{
+			IsLive: true,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		if err := json.NewEncoder(w).Encode(yt); err != nil {
+		if err := json.NewEncoder(w).Encode(live); err != nil {
 			panic(err)
 		}
 	}
@@ -89,8 +81,6 @@ func main() {
 	}
 
 	idleConnsClosed := make(chan struct{})
-
-	fmt.Println("Change")
 
 	if err := srv.ListenAndServe(); err != nil {
 		if !errors.Is(err, http.ErrServerClosed) {
