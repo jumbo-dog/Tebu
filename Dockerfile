@@ -7,7 +7,7 @@ FROM golang:1.20 as builder
 WORKDIR /botservice-files
 COPY --from=root-certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -o ./botservice ./cmd
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -o ./botservice ./cmd/startup
 
 FROM scratch as final
 COPY --from=root-certs /etc/passwd /etc/passwd

@@ -1,0 +1,10 @@
+apiVersion: skaffold/v2beta8
+kind: Config
+build:
+  artifacts:
+  - image: leo5123/tebu-service
+deploy:
+  helm:
+    releases:
+    - name: operations
+      chartPath: ./charts/bot-service-chart

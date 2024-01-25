@@ -1,27 +1,23 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"errors"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
-	"time"
 
+	"tebu-discord/cmd/healthcheck"
 	config "tebu-discord/database/config"
 	commands "tebu-discord/internal/commands/entity"
 	components "tebu-discord/internal/game/components/entity"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/julienschmidt/httprouter"
 )
 
 var (
 	s            *discordgo.Session
 	mainBotToken = "BOT_TOKEN"
 	// testBotToken = "BOT_TOKEN_TEST"
+
 )
 
 func init() {
@@ -29,29 +25,6 @@ func init() {
 	s, err = discordgo.New("Bot " + os.Getenv(mainBotToken))
 	if err != nil {
 		log.Fatalf("Invalid bot parameters: %v", err)
-	}
-}
-
-func newRouter() *httprouter.Router {
-	mux := httprouter.New()
-	mux.GET("/live", statusCheck())
-	return mux
-}
-
-type Live struct {
-	IsLive bool `json:"islive"`
-}
-
-func statusCheck() httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		live := Live{
-			IsLive: true,
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		if err := json.NewEncoder(w).Encode(live); err != nil {
-			panic(err)
-		}
 	}
 }
 
@@ -74,34 +47,15 @@ func main() {
 			components.HandleComponents(s, i)
 		}
 	})
-
-	srv := &http.Server{
-		Addr:    ":10101",
-		Handler: newRouter(),
-	}
-
-	idleConnsClosed := make(chan struct{})
-
-	if err := srv.ListenAndServe(); err != nil {
-		if !errors.Is(err, http.ErrServerClosed) {
-			log.Printf("fatal http server failed to start: %v", err)
-		}
-	}
+	healthcheck.StartServer()
 
 	defer s.Close()
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	log.Println("Press Ctrl+C to exit")
 	<-stop
-	<-idleConnsClosed
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
-	defer cancel()
 
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Printf("http server shutdown error %v", err)
-	}
-
-	close(idleConnsClosed)
+	healthcheck.ShutdownServer()
 	commands.RemoveSlashCommands(s)
 	config.DisconnectDatabase()
 
