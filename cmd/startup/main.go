@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -32,7 +33,9 @@ func main() {
 	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		log.Printf("Logged in as: %v#%v\n", s.State.User.Username, s.State.User.Discriminator)
 	})
+	fmt.Println("ttata")
 	err := s.Open()
+
 	if err != nil {
 		log.Fatalf("Cannot open the session: %v", err)
 	}

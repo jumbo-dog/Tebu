@@ -3,8 +3,11 @@ kind: Config
 build:
   artifacts:
   - image: leo5123/tebu-service
+    context: .
 deploy:
   helm:
     releases:
     - name: operations
       chartPath: ./charts/bot-service-chart
+      valuesFiles:
+          - ../kubernetes-secrets/myvalues.yaml
