@@ -14,7 +14,7 @@ import (
 
 var (
 	progress uint8
-	dialogs  = dialog.GetDialog("../../internal/questText/quest_000.json")
+	dialogs  = dialog.GetDialog("./questText/quest_000.json")
 )
 
 func GenerateQuest0(

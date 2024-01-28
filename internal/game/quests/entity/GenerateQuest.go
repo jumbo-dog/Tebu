@@ -23,19 +23,26 @@ func GenerateQuest(
 	i *discordgo.InteractionCreate,
 	playerSave ...*models.PlayerSave,
 ) {
+	var questNumber uint16
+
 	PlayerSave, err := save.GetSave(i.User.ID)
-
+	questNumber = PlayerSave.Progress.Quest.QuestNumber
 	if err == mongo.ErrNoDocuments {
-		PlayerSave.DiscordId = i.User.ID
-		PlayerSave.LastUsername = i.User.Username
-		save.CreateSave(PlayerSave)
+		newSave := &models.PlayerSave{
+			DiscordId:    i.User.ID,
+			LastUsername: i.User.Username,
+			Progress: &models.Progress{
+				Quest: &models.Quest{
+					QuestNumber: 0,
+				},
+			},
+		}
+		questNumber = 0
+		save.CreateSave(newSave)
 	}
-
 	if err != nil && err != mongo.ErrNoDocuments {
 		log.Fatalf("Error generating quest: %v", err)
 	}
-
-	questNumber := PlayerSave.Progress.Quest.QuestNumber
 	if h, ok := questsHandlers[questNumber]; ok {
 		h(s, i, PlayerSave)
 	}
