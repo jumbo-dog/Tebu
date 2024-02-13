@@ -2,7 +2,6 @@ package quests
 
 import (
 	"log"
-	"tebu-discord/database/models"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -10,7 +9,6 @@ import (
 func GenerateQuest1(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,

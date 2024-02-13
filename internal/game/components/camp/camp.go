@@ -19,7 +19,6 @@ var (
 func GoToCamp(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
 
 	lastSave, errSave := save.GetSave(i.User.ID)
@@ -41,7 +40,7 @@ func GoToCamp(
 							Label: "Craft",
 							Style: discordgo.SuccessButton,
 							Emoji: discordgo.ComponentEmoji{
-								Name: "🛠",
+								Name: "🛠️",
 							},
 							CustomID: "goto_craftbench",
 						},

@@ -23,7 +23,6 @@ func CreateSave(information *models.PlayerSave) {
 		fmt.Printf("Error creating unique index: %s\n", err)
 		return
 	}
-
 	_, err = db.InsertOne(context.Background(), information)
 	if err != nil {
 		fmt.Printf("Error creating new save: %s\n", err)

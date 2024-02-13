@@ -12,7 +12,7 @@ import (
 
 var (
 	PlayerSave     models.PlayerSave
-	questsHandlers = map[uint16]func(*discordgo.Session, *discordgo.InteractionCreate, ...*models.PlayerSave){
+	questsHandlers = map[uint16]func(*discordgo.Session, *discordgo.InteractionCreate){
 		0: quests.GenerateQuest0,
 		1: quests.GenerateQuest1,
 	}
@@ -21,22 +21,19 @@ var (
 func GenerateQuest(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
 	var questNumber uint16
 
 	PlayerSave, err := save.GetSave(i.User.ID)
 	if err == mongo.ErrNoDocuments {
-		newSave := &models.PlayerSave{
-			LastUsername: i.User.Username,
-		}
-		save.CreateSave(newSave)
+		PlayerSave.LastUsername = i.User.Username
+		save.CreateSave(PlayerSave)
 	}
 	questNumber = PlayerSave.Progress.Quest.QuestNumber
-	if err != nil && err != mongo.ErrNoDocuments {
+	if err != mongo.ErrNoDocuments && err != nil {
 		log.Fatalf("Error generating quest: %v", err)
 	}
 	if h, ok := questsHandlers[questNumber]; ok {
-		h(s, i, PlayerSave)
+		h(s, i)
 	}
 }

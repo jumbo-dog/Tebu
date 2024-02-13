@@ -3,8 +3,6 @@ package levelOneForest
 import (
 	"fmt"
 	"strconv"
-	"tebu-discord/database/controller/save"
-	"tebu-discord/database/models"
 	"tebu-discord/pkg/dialog"
 
 	"github.com/bwmarrin/discordgo"
@@ -25,18 +23,10 @@ var (
 func LevelOneForest(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
-	lastSave, errSave := save.GetSave(i.User.ID)
-	if errSave != nil {
-		fmt.Println("Error fetching save data:", errSave)
-		return
-	}
-
 	gatherResources("gather_wood_button", &Sticks, &DisableSticks, i)
 	gatherResources("gather_pebbles", &Stones, &DisableStone, i)
 	updateParagraph()
-	disableCamp = shouldDisableCamp(lastSave.Resources, Sticks, Stones)
 
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
@@ -78,7 +68,6 @@ func LevelOneForest(
 							Emoji: discordgo.ComponentEmoji{
 								Name: "⛺",
 							},
-							Disabled: disableCamp,
 							CustomID: "goto_camp",
 						},
 					},
@@ -126,16 +115,5 @@ func updateParagraph() {
 		maxSticks = ""
 		maxPebbles = ""
 		MaxResources = dialogs[5].DialogText[0]
-		disableCamp = false
 	}
-}
-
-func shouldDisableCamp(resources map[string]uint32, Sticks int, Stones int) bool {
-	if resources != nil {
-		return false
-	}
-	if resources == nil {
-		return true
-	}
-	return true
 }

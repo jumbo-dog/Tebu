@@ -3,6 +3,7 @@ package save
 import (
 	"context"
 	"fmt"
+	"log"
 	config "tebu-discord/database/config"
 	"tebu-discord/database/models"
 
@@ -32,8 +33,7 @@ func GetSave(discordId string) (*models.PlayerSave, error) {
 		return result, err
 	}
 	if err != nil {
-		fmt.Printf("Error obtaining the save: %s\n", err)
-		return result, err
+		log.Fatal("Error obtaining the save", err)
 	}
 	return result, nil
 }

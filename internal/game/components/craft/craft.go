@@ -17,7 +17,6 @@ var (
 func Craft(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
 	disableTorch = false
 	lastSave, errSave := save.GetSave(i.User.ID)
@@ -39,8 +38,11 @@ func Craft(
 				&discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
 						discordgo.Button{
-							Label:    "Torch",
-							Style:    discordgo.SuccessButton,
+							Label: "Torch",
+							Style: discordgo.SuccessButton,
+							Emoji: discordgo.ComponentEmoji{
+								Name: "🔥",
+							},
 							Disabled: disableTorch,
 							CustomID: "create_torch",
 						},
@@ -49,8 +51,11 @@ func Craft(
 				&discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
 						discordgo.Button{
-							Label:    "???",
-							Style:    discordgo.SuccessButton,
+							Label: "???",
+							Style: discordgo.SuccessButton,
+							Emoji: discordgo.ComponentEmoji{
+								Name: "🚫",
+							},
 							Disabled: true,
 							CustomID: "whatthefrick",
 						},
@@ -61,6 +66,9 @@ func Craft(
 						discordgo.Button{
 							Label:    "???",
 							Disabled: true,
+							Emoji: discordgo.ComponentEmoji{
+								Name: "🚫",
+							},
 							Style:    discordgo.SuccessButton,
 							CustomID: "OOOOOOOOOOOOOOOOOOOOHMYGAH",
 						},

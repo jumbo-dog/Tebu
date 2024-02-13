@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"tebu-discord/database/models"
 	"tebu-discord/internal/game/components/camp"
 	"tebu-discord/internal/game/components/craft"
 	levelOneForest "tebu-discord/internal/game/components/levelOneForest"
@@ -14,7 +13,7 @@ import (
 var (
 	playersave = entity.PlayerSave
 
-	componentsHandlers = map[string]func(*discordgo.Session, *discordgo.InteractionCreate, ...*models.PlayerSave){
+	componentsHandlers = map[string]func(*discordgo.Session, *discordgo.InteractionCreate){
 		// Components
 		"gather_wood_button":     levelOneForest.LevelOneForest,
 		"gather_pebbles":         levelOneForest.LevelOneForest,
@@ -33,6 +32,6 @@ var (
 
 func HandleComponents(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	if h, ok := componentsHandlers[i.MessageComponentData().CustomID]; ok {
-		h(s, i, &playersave)
+		h(s, i)
 	}
 }

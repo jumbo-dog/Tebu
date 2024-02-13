@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"tebu-discord/cmd/healthcheck"
 	config "tebu-discord/database/config"
 	commands "tebu-discord/internal/commands/entity"
 	components "tebu-discord/internal/game/components/entity"
@@ -23,7 +22,7 @@ var (
 
 func init() {
 
-	err = godotenv.Load("../../.env")
+	err = godotenv.Load(".env")
 	if err != nil {
 		fmt.Println("Error loading .env file:", err)
 	}
@@ -38,7 +37,6 @@ func main() {
 		log.Printf("Logged in as: %v#%v\n", s.State.User.Username, s.State.User.Discriminator)
 	})
 	err := s.Open()
-	fmt.Println("fffffffff")
 
 	if err != nil {
 		log.Fatalf("Cannot open the session: %v", err)
@@ -55,7 +53,6 @@ func main() {
 			components.HandleComponents(s, i)
 		}
 	})
-	healthcheck.StartServer()
 
 	defer s.Close()
 	stop := make(chan os.Signal, 1)
@@ -63,7 +60,6 @@ func main() {
 	log.Println("Press Ctrl+C to exit")
 	<-stop
 
-	healthcheck.ShutdownServer()
 	commands.RemoveSlashCommands(s)
 	config.DisconnectDatabase()
 
