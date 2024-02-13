@@ -14,6 +14,10 @@ import (
 func GetSave(discordId string) (*models.PlayerSave, error) {
 	result := &models.PlayerSave{
 		DiscordId: discordId,
+		Progress: &models.Progress{
+			Planet: &models.Planet{},
+			Quest:  &models.Quest{},
+		},
 	}
 	if discordId == "" {
 		fmt.Printf("Discord id is obligatory:\n")
