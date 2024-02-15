@@ -33,6 +33,7 @@ func GenerateQuest(
 	if err != mongo.ErrNoDocuments && err != nil {
 		log.Fatalf("Error generating quest: %v", err)
 	}
+
 	if h, ok := questsHandlers[questNumber]; ok {
 		h(s, i)
 	}

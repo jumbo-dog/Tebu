@@ -2,6 +2,7 @@ package entity
 
 import (
 	"tebu-discord/internal/game/components/camp"
+	"tebu-discord/internal/game/components/combatsys"
 	"tebu-discord/internal/game/components/craft"
 	levelOneForest "tebu-discord/internal/game/components/levelOneForest"
 	"tebu-discord/internal/game/quests"
@@ -22,6 +23,8 @@ var (
 		"store_materials_button": camp.GoToCamp,
 		"goto_craftbench":        craft.Craft,
 		"create_torch":           craft.Craft,
+		"init_attack":            combatsys.HandleCombat,
+		"attack_button":          combatsys.HandleAttacks,
 		// Menu components
 		"quest_generate": entity.GenerateQuest,
 
