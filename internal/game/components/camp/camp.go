@@ -14,6 +14,7 @@ var (
 	disableStorage    bool = true
 	FullBackpackWood       = ""
 	FullBackpackStone      = ""
+	gotoWhere              = "goto_forest"
 )
 
 func GoToCamp(
@@ -28,6 +29,9 @@ func GoToCamp(
 	}
 	checkResourses(lastSave)
 	storeMaterials("store_materials_button", i, lastSave)
+	if lastSave.Items["torch"] != 0 {
+		gotoWhere = "choose_forest"
+	}
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
@@ -67,7 +71,7 @@ func GoToCamp(
 							Emoji: discordgo.ComponentEmoji{
 								Name: "🌳",
 							},
-							CustomID: "goto_forest",
+							CustomID: gotoWhere,
 						},
 					},
 				},
@@ -88,7 +92,7 @@ func checkResourses(lastSave *models.PlayerSave) {
 	if lastSave.Resources["stone"] == 50 {
 		FullBackpackStone = " *(MAX)*"
 	}
-	resources := levelOneForest.Sticks + levelOneForest.Stones
+	resources := levelOneForest.Wood + levelOneForest.Stones
 	if resources > 0 {
 		disableStorage = false
 	}
@@ -98,14 +102,14 @@ func isBiggerThanBackpack(lastSave *models.PlayerSave, SavedWood uint32, SavedSt
 	if lastSave.Resources == nil {
 		lastSave.Resources = make(map[string]uint32)
 	}
-	if lastSave.Resources != nil && int(SavedWood)+levelOneForest.Sticks < 50 {
-		lastSave.Resources["wood"] += uint32(levelOneForest.Sticks)
+	if lastSave.Resources != nil && int(SavedWood)+levelOneForest.Wood < 50 {
+		lastSave.Resources["wood"] += uint32(levelOneForest.Wood)
 	} else {
 		lastSave.Resources["wood"] = 50
 		FullBackpackWood = " *(MAX)*"
 	}
 	if lastSave.Resources != nil && int(SavedStone)+levelOneForest.Stones < 50 {
-		lastSave.Resources["stone"] += uint32(levelOneForest.Sticks)
+		lastSave.Resources["stone"] += uint32(levelOneForest.Wood)
 	} else {
 		lastSave.Resources["stone"] = 50
 		FullBackpackStone = " *(MAX)*"
@@ -123,9 +127,9 @@ func storeMaterials(customID string, i *discordgo.InteractionCreate, lastSave *m
 }
 
 func resetForest() {
-	levelOneForest.Sticks = 0
+	levelOneForest.Wood = 0
 	levelOneForest.Stones = 0
-	levelOneForest.DisableSticks = false
+	levelOneForest.DisableWood = false
 	levelOneForest.DisableStone = false
 	levelOneForest.MaxResources = ""
 	disableStorage = true
