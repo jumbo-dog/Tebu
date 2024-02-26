@@ -5,24 +5,27 @@ import (
 	"log"
 	"os"
 	"os/signal"
-
-	"tebu-discord/cmd/healthcheck"
 	config "tebu-discord/database/config"
 	commands "tebu-discord/internal/commands/entity"
 	components "tebu-discord/internal/game/components/entity"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/joho/godotenv"
 )
 
 var (
 	s            *discordgo.Session
 	mainBotToken = "BOT_TOKEN"
 	// testBotToken = "BOT_TOKEN_TEST"
-
+	err error
 )
 
 func init() {
-	var err error
+
+	err = godotenv.Load(".env")
+	if err != nil {
+		fmt.Println("Error loading .env file:", err)
+	}
 	s, err = discordgo.New("Bot " + os.Getenv(mainBotToken))
 	if err != nil {
 		log.Fatalf("Invalid bot parameters: %v", err)
@@ -33,7 +36,6 @@ func main() {
 	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		log.Printf("Logged in as: %v#%v\n", s.State.User.Username, s.State.User.Discriminator)
 	})
-	fmt.Println("ttata")
 	err := s.Open()
 
 	if err != nil {
@@ -42,6 +44,7 @@ func main() {
 
 	commands.CreateSlashCommands(s)
 	config.ConnectDatabase()
+
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		switch i.Type {
 		case discordgo.InteractionApplicationCommand:
@@ -50,7 +53,6 @@ func main() {
 			components.HandleComponents(s, i)
 		}
 	})
-	healthcheck.StartServer()
 
 	defer s.Close()
 	stop := make(chan os.Signal, 1)
@@ -58,7 +60,6 @@ func main() {
 	log.Println("Press Ctrl+C to exit")
 	<-stop
 
-	healthcheck.ShutdownServer()
 	commands.RemoveSlashCommands(s)
 	config.DisconnectDatabase()
 

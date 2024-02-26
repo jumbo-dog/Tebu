@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"tebu-discord/database/controller/save"
-	"tebu-discord/database/models"
 	"tebu-discord/pkg/dialog"
 	"tebu-discord/pkg/timer"
 	"time"
@@ -20,12 +19,11 @@ var (
 func GenerateQuest0(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
-			Content: "Game started!\n **Remember: read the prompt and the button text**",
+			Content: "Game started!!\n **Remember: read the prompt and the button text**",
 			Flags:   discordgo.MessageFlagsEphemeral,
 		},
 	})
@@ -55,7 +53,11 @@ func GenerateQuest0(
 			discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{
 					discordgo.Button{
-						Label:    "Explore",
+						Label: "Explore",
+						Style: discordgo.SuccessButton,
+						Emoji: discordgo.ComponentEmoji{
+							Name: "🌳",
+						},
 						CustomID: "quest0_Button",
 					},
 				},
@@ -67,7 +69,6 @@ func GenerateQuest0(
 func ButtonQuest0(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
 	var (
 		label    string
@@ -100,6 +101,7 @@ func ButtonQuest0(
 		content = dialogs[6].DialogText[0]
 
 		cloudSave.Progress.Quest.QuestNumber = 1
+		cloudSave.Progress.Quest.QuestProgress = 0
 		save.UpdateSave(cloudSave)
 
 		customID = "quest_generate"
@@ -115,8 +117,11 @@ func ButtonQuest0(
 			Flags:   discordgo.MessageFlagsEphemeral,
 			Components: []discordgo.MessageComponent{&discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{discordgo.Button{
-					Label:    label,
-					Style:    discordgo.PrimaryButton,
+					Label: label,
+					Style: discordgo.PrimaryButton,
+					Emoji: discordgo.ComponentEmoji{
+						Name: "🌳",
+					},
 					CustomID: customID,
 				}},
 			}},

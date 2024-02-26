@@ -3,21 +3,18 @@ package levelOneForest
 import (
 	"fmt"
 	"strconv"
-	"tebu-discord/database/controller/save"
-	"tebu-discord/database/models"
 	"tebu-discord/pkg/dialog"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
-	Sticks, Stones int = 0, 0
+	Wood, Stones int = 0, 0
 	paragraph      string
-	DisableSticks  bool
+	DisableWood  bool
 	DisableStone   bool
-	disableCamp    bool = true
-	maxSticks      string
-	maxPebbles     string
+	maxWood        string
+	maxStones       string
 	MaxResources   string
 	dialogs        = dialog.GetDialog("./questText/quest_001.json")
 )
@@ -25,34 +22,26 @@ var (
 func LevelOneForest(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
-	lastSave, errSave := save.GetSave(i.User.ID)
-	if errSave != nil {
-		fmt.Println("Error fetching save data:", errSave)
-		return
-	}
-
-	gatherResources("gather_wood_button", &Sticks, &DisableSticks, i)
+	gatherResources("gather_wood_button", &Wood, &DisableWood, i)
 	gatherResources("gather_pebbles", &Stones, &DisableStone, i)
 	updateParagraph()
-	disableCamp = shouldDisableCamp(lastSave.Resources, Sticks, Stones)
 
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
-			Content: paragraph + "\nWood: " + strconv.Itoa(Sticks) + " " + maxSticks + "\nStone: " + strconv.Itoa(Stones) + " " + maxPebbles + "\n" + MaxResources,
+			Content: paragraph + "\nWood: " + strconv.Itoa(Wood) + " " + maxWood + "\nStone: " + strconv.Itoa(Stones) + " " + maxStones + "\n" + MaxResources,
 			Flags:   discordgo.MessageFlagsEphemeral,
 			Components: []discordgo.MessageComponent{
 				&discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
 						discordgo.Button{
-							Label: "Gather some sticks",
+							Label: "Gather some Wood",
 							Style: discordgo.SuccessButton,
 							Emoji: discordgo.ComponentEmoji{
 								Name: "🪵",
 							},
-							Disabled: DisableSticks,
+							Disabled: DisableWood,
 							CustomID: "gather_wood_button",
 						},
 					},
@@ -78,7 +67,6 @@ func LevelOneForest(
 							Emoji: discordgo.ComponentEmoji{
 								Name: "⛺",
 							},
-							Disabled: disableCamp,
 							CustomID: "goto_camp",
 						},
 					},
@@ -101,41 +89,30 @@ func gatherResources(customID string, resource *int, disableFlag *bool, i *disco
 
 func updateParagraph() {
 	paragraph = dialogs[0].DialogText[0]
-	if Sticks >= 12 || Stones >= 12 {
+	if Wood >= 12 || Stones >= 12 {
 		paragraph = dialogs[1].DialogText[0]
 	}
-	if Sticks >= 20 || Stones >= 20 {
+	if Wood >= 20 || Stones >= 20 {
 		paragraph = dialogs[2].DialogText[0]
 	}
 
-	if Sticks > 5 && maxPebbles == "" {
-		maxSticks = dialogs[3].DialogText[0]
+	if Wood > 5 && maxStones == "" {
+		maxWood = dialogs[3].DialogText[0]
 	}
-	if Stones > 5 && maxSticks == "" {
-		maxPebbles = dialogs[3].DialogText[0]
-	}
-
-	if Sticks == 20 && Stones < 20 {
-		maxSticks = dialogs[4].DialogText[0]
-	}
-	if Stones == 20 && Sticks < 20 {
-		maxPebbles = dialogs[4].DialogText[0]
+	if Stones > 5 && maxWood == "" {
+		maxStones = dialogs[3].DialogText[0]
 	}
 
-	if Sticks == 20 && Stones == 20 {
-		maxSticks = ""
-		maxPebbles = ""
+	if Wood == 20 && Stones < 20 {
+		maxWood = dialogs[4].DialogText[0]
+	}
+	if Stones == 20 && Wood < 20 {
+		maxStones = dialogs[4].DialogText[0]
+	}
+
+	if Wood == 20 && Stones == 20 {
+		maxWood = ""
+		maxStones = ""
 		MaxResources = dialogs[5].DialogText[0]
-		disableCamp = false
 	}
-}
-
-func shouldDisableCamp(resources map[string]uint32, Sticks int, Stones int) bool {
-	if resources != nil {
-		return false
-	}
-	if resources == nil {
-		return true
-	}
-	return true
 }

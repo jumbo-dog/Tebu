@@ -4,6 +4,7 @@ import (
 	"log"
 	"tebu-discord/database/controller/save"
 	"tebu-discord/database/models"
+	"tebu-discord/internal/game/components/chooseForest"
 	"tebu-discord/internal/game/quests"
 
 	"github.com/bwmarrin/discordgo"
@@ -12,38 +13,30 @@ import (
 
 var (
 	PlayerSave     models.PlayerSave
-	questsHandlers = map[uint16]func(*discordgo.Session, *discordgo.InteractionCreate, ...*models.PlayerSave){
+	questsHandlers = map[uint16]func(*discordgo.Session, *discordgo.InteractionCreate){
 		0: quests.GenerateQuest0,
 		1: quests.GenerateQuest1,
+		2: chooseForest.ChooseWhereToGo,
 	}
 )
 
 func GenerateQuest(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
 	var questNumber uint16
 
 	PlayerSave, err := save.GetSave(i.User.ID)
-	questNumber = PlayerSave.Progress.Quest.QuestNumber
 	if err == mongo.ErrNoDocuments {
-		newSave := &models.PlayerSave{
-			DiscordId:    i.User.ID,
-			LastUsername: i.User.Username,
-			Progress: &models.Progress{
-				Quest: &models.Quest{
-					QuestNumber: 0,
-				},
-			},
-		}
-		questNumber = 0
-		save.CreateSave(newSave)
+		PlayerSave.LastUsername = i.User.Username
+		save.CreateSave(PlayerSave)
 	}
-	if err != nil && err != mongo.ErrNoDocuments {
+	questNumber = PlayerSave.Progress.Quest.QuestNumber
+	if err != mongo.ErrNoDocuments && err != nil {
 		log.Fatalf("Error generating quest: %v", err)
 	}
+
 	if h, ok := questsHandlers[questNumber]; ok {
-		h(s, i, PlayerSave)
+		h(s, i)
 	}
 }
