@@ -4,6 +4,7 @@ import (
 	"log"
 	"tebu-discord/database/controller/save"
 	"tebu-discord/database/models"
+	"tebu-discord/internal/game/components/chooseForest"
 	"tebu-discord/internal/game/quests"
 
 	"github.com/bwmarrin/discordgo"
@@ -15,6 +16,7 @@ var (
 	questsHandlers = map[uint16]func(*discordgo.Session, *discordgo.InteractionCreate){
 		0: quests.GenerateQuest0,
 		1: quests.GenerateQuest1,
+		2: chooseForest.ChooseWhereToGo,
 	}
 )
 
@@ -33,6 +35,7 @@ func GenerateQuest(
 	if err != mongo.ErrNoDocuments && err != nil {
 		log.Fatalf("Error generating quest: %v", err)
 	}
+
 	if h, ok := questsHandlers[questNumber]; ok {
 		h(s, i)
 	}

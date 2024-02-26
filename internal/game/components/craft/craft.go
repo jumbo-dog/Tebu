@@ -12,12 +12,30 @@ import (
 
 var (
 	disableTorch bool
+
+	woodenSpear         string = "???"
+	woodenSpearId       string = "randomId1"
+	woodenSpearDisabled bool
+	woodenSpearEmoji    string = "🚫"
+
+	axe         string = "???"
+	axeId       string = "randomId2"
+	axeDisabled bool
+	axeEmoji    string = "🚫"
+
+	pickaxe         string = "???"
+	pickaxeId       string = "randomId3"
+	pickaxeDisabled bool
+	pickaxeEmoji    string = "🚫"
 )
 
 func Craft(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
 ) {
+	axeDisabled = false
+	woodenSpearDisabled = false
+	pickaxeDisabled = false
 	disableTorch = false
 	lastSave, errSave := save.GetSave(i.User.ID)
 	if errSave != nil {
@@ -25,9 +43,13 @@ func Craft(
 		return
 	}
 	craftTorch(i, lastSave)
+	craftSpear(i, lastSave)
+	craftAxe(i, lastSave)
+	craftPickaxe(i, lastSave)
 	canCraft(lastSave)
 	isMaxResources(lastSave)
 	save.UpdateSave(lastSave)
+	fmt.Println(i.MessageComponentData().CustomID)
 
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
@@ -44,33 +66,46 @@ func Craft(
 								Name: "🔥",
 							},
 							Disabled: disableTorch,
-							CustomID: "create_torch",
+							CustomID: "craft_torch",
 						},
 					},
 				},
 				&discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
 						discordgo.Button{
-							Label: "???",
+							Label: woodenSpear,
 							Style: discordgo.SuccessButton,
 							Emoji: discordgo.ComponentEmoji{
-								Name: "🚫",
+								Name: woodenSpearEmoji,
 							},
-							Disabled: true,
-							CustomID: "whatthefrick",
+							Disabled: woodenSpearDisabled,
+							CustomID: woodenSpearId,
 						},
 					},
 				},
 				&discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
 						discordgo.Button{
-							Label:    "???",
-							Disabled: true,
+							Label:    axe,
+							Disabled: axeDisabled,
 							Emoji: discordgo.ComponentEmoji{
-								Name: "🚫",
+								Name: axeEmoji,
 							},
 							Style:    discordgo.SuccessButton,
-							CustomID: "OOOOOOOOOOOOOOOOOOOOHMYGAH",
+							CustomID: axeId,
+						},
+					},
+				},
+				&discordgo.ActionsRow{
+					Components: []discordgo.MessageComponent{
+						discordgo.Button{
+							Label:    pickaxe,
+							Disabled: pickaxeDisabled,
+							Emoji: discordgo.ComponentEmoji{
+								Name: pickaxeEmoji,
+							},
+							Style:    discordgo.SuccessButton,
+							CustomID: pickaxeId,
 						},
 					},
 				},
@@ -95,7 +130,7 @@ func Craft(
 }
 
 func craftTorch(i *discordgo.InteractionCreate, lastSave *models.PlayerSave) {
-	if i.MessageComponentData().CustomID == "create_torch" {
+	if i.MessageComponentData().CustomID == "craft_torch" {
 		if lastSave.Items == nil {
 			lastSave.Items = make(map[string]uint16)
 		}
@@ -106,9 +141,68 @@ func craftTorch(i *discordgo.InteractionCreate, lastSave *models.PlayerSave) {
 		lastSave.Resources["wood"] -= 10
 	}
 }
+func craftAxe(i *discordgo.InteractionCreate, lastSave *models.PlayerSave) {
+	if i.MessageComponentData().CustomID == "craft_axe" {
+		if lastSave.Items == nil {
+			lastSave.Items = make(map[string]uint16)
+		}
+		lastSave.Items["axe"] += 1
+		if lastSave.Resources == nil {
+			lastSave.Resources = make(map[string]uint32)
+		}
+		lastSave.Resources["wood"] -= 20
+	}
+}
+func craftPickaxe(i *discordgo.InteractionCreate, lastSave *models.PlayerSave) {
+	if i.MessageComponentData().CustomID == "craft_pickaxe" {
+		if lastSave.Items == nil {
+			lastSave.Items = make(map[string]uint16)
+		}
+		lastSave.Items["pickaxe"] += 1
+		if lastSave.Resources == nil {
+			lastSave.Resources = make(map[string]uint32)
+		}
+		lastSave.Resources["wood"] -= 10
+		lastSave.Resources["stone"] -= 20
+	}
+}
+func craftSpear(i *discordgo.InteractionCreate, lastSave *models.PlayerSave) {
+	if i.MessageComponentData().CustomID == "craft_wooden_spear" {
+		if lastSave.Items == nil {
+			lastSave.Items = make(map[string]uint16)
+		}
+		lastSave.Items["wooden_spear"] += 1
+		if lastSave.Resources == nil {
+			lastSave.Resources = make(map[string]uint32)
+		}
+		lastSave.Resources["wood"] -= 30
+	}
+}
 func canCraft(lastSave *models.PlayerSave) {
 	if lastSave.Resources == nil || lastSave.Resources["wood"] < 10 {
 		disableTorch = true
+	}
+	if lastSave.Resources == nil || lastSave.Resources["wood"] < 30 {
+		woodenSpearDisabled = true
+	}
+	if lastSave.Resources == nil || lastSave.Resources["wood"] < 20 {
+		axeDisabled = true
+	}
+	if lastSave.Resources == nil || lastSave.Resources["wood"] < 10 || lastSave.Resources["stone"] < 20 {
+		pickaxeDisabled = true
+	}
+	if lastSave.Progress.Quest.QuestNumber == 2 {
+		axe = "Axe (20 woods)"
+		axeEmoji = "🪓"
+		axeId = "craft_axe"
+
+		woodenSpear = "Wooden spear (50 woods)"
+		woodenSpearEmoji = "⚔️"
+		woodenSpearId = "craft_wooden_spear"
+
+		pickaxe = "Pickaxe (10 woods, 20 stones)"
+		pickaxeEmoji = "⛏️"
+		pickaxeId = "craft_pickaxe"
 	}
 }
 func isMaxResources(lastSave *models.PlayerSave) {

@@ -6,6 +6,7 @@ import (
 	"tebu-discord/database/controller/save"
 	"tebu-discord/database/models"
 	"tebu-discord/internal/game/components/levelOneForest"
+	"tebu-discord/internal/game/components/levelTwoForest"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -29,7 +30,7 @@ func GoToCamp(
 	}
 	checkResourses(lastSave)
 	storeMaterials("store_materials_button", i, lastSave)
-	if lastSave.Items["torch"] != 0 {
+	if lastSave.Items["torch"] > 0 {
 		gotoWhere = "choose_forest"
 	}
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
@@ -92,7 +93,7 @@ func checkResourses(lastSave *models.PlayerSave) {
 	if lastSave.Resources["stone"] == 50 {
 		FullBackpackStone = " *(MAX)*"
 	}
-	resources := levelOneForest.Wood + levelOneForest.Stones
+	resources := levelOneForest.Wood + levelTwoForest.Wood + levelOneForest.Stones + levelTwoForest.Stones
 	if resources > 0 {
 		disableStorage = false
 	}
@@ -102,14 +103,14 @@ func isBiggerThanBackpack(lastSave *models.PlayerSave, SavedWood uint32, SavedSt
 	if lastSave.Resources == nil {
 		lastSave.Resources = make(map[string]uint32)
 	}
-	if lastSave.Resources != nil && int(SavedWood)+levelOneForest.Wood < 50 {
-		lastSave.Resources["wood"] += uint32(levelOneForest.Wood)
+	if lastSave.Resources != nil && int(SavedWood)+levelOneForest.Wood+levelTwoForest.Wood < 50 {
+		lastSave.Resources["wood"] += uint32(levelOneForest.Wood + levelTwoForest.Wood)
 	} else {
 		lastSave.Resources["wood"] = 50
 		FullBackpackWood = " *(MAX)*"
 	}
-	if lastSave.Resources != nil && int(SavedStone)+levelOneForest.Stones < 50 {
-		lastSave.Resources["stone"] += uint32(levelOneForest.Wood)
+	if lastSave.Resources != nil && int(SavedStone)+levelOneForest.Stones+levelTwoForest.Stones < 50 {
+		lastSave.Resources["stone"] += uint32(levelOneForest.Stones + levelTwoForest.Stones)
 	} else {
 		lastSave.Resources["stone"] = 50
 		FullBackpackStone = " *(MAX)*"
@@ -129,6 +130,11 @@ func storeMaterials(customID string, i *discordgo.InteractionCreate, lastSave *m
 func resetForest() {
 	levelOneForest.Wood = 0
 	levelOneForest.Stones = 0
+	levelTwoForest.Wood = 0
+	levelTwoForest.Stones = 0
+
+	levelTwoForest.DisableWood = false
+	levelTwoForest.DisableStone = false
 	levelOneForest.DisableWood = false
 	levelOneForest.DisableStone = false
 	levelOneForest.MaxResources = ""

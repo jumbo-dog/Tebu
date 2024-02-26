@@ -2,6 +2,8 @@ package chooseForest
 
 import (
 	"fmt"
+	"tebu-discord/database/controller/save"
+	"tebu-discord/database/models"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -10,6 +12,15 @@ func ChooseWhereToGo(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
 ) {
+	save.UpdateSave(&models.PlayerSave{
+		DiscordId: i.User.ID,
+		Progress: &models.Progress{
+			Quest: &models.Quest{
+				QuestNumber:   2,
+				QuestProgress: 0,
+			},
+		},
+	})
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
