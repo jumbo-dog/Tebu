@@ -3,7 +3,6 @@ package entity
 import (
 	"fmt"
 	"log"
-	followup "tebu-discord/internal/commands/direct/game/followUp"
 	menu "tebu-discord/internal/commands/global/menu"
 
 	"github.com/bwmarrin/discordgo"
@@ -12,21 +11,12 @@ import (
 var (
 	commands = []*discordgo.ApplicationCommand{
 		{
-			Name:        "basic-command-with-files",
-			Description: "Basic command with files",
-		},
-		{
-			Name:        "followups",
-			Description: "Followup messages",
-		},
-		{
 			Name:        "menu",
 			Description: "Menu with the main options of the bot",
 		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"followups": followup.FollowUp,
-		"menu":      menu.StartMenu,
+		"menu": menu.StartMenu,
 	}
 	registeredCommands = make([]*discordgo.ApplicationCommand, len(commands))
 )
@@ -61,7 +51,7 @@ func HandleSlashCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
 // NOT USED
 // DELETES ALL COMMANDS FROM A USER, ONLY PRIVATE COMMANDS
 // To delete guild commands insert guild id
-func DeleteAllCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func DeleteAllCommands(s *discordgo.Session) {
 	applications, err := s.ApplicationCommands(s.State.User.ID, "")
 	if err != nil {
 		fmt.Println("Error getting application commands:", err)

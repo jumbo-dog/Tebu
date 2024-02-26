@@ -3,6 +3,7 @@ package save
 import (
 	"context"
 	"fmt"
+	"log"
 	config "tebu-discord/database/config"
 	"tebu-discord/database/models"
 
@@ -14,6 +15,10 @@ import (
 func GetSave(discordId string) (*models.PlayerSave, error) {
 	result := &models.PlayerSave{
 		DiscordId: discordId,
+		Progress: &models.Progress{
+			Planet: &models.Planet{},
+			Quest:  &models.Quest{},
+		},
 	}
 	if discordId == "" {
 		fmt.Printf("Discord id is obligatory:\n")
@@ -28,8 +33,7 @@ func GetSave(discordId string) (*models.PlayerSave, error) {
 		return result, err
 	}
 	if err != nil {
-		fmt.Printf("Error obtaining the save: %s\n", err)
-		return result, err
+		log.Fatal("Error obtaining the save", err)
 	}
 	return result, nil
 }

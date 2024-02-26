@@ -1,9 +1,11 @@
 package quests
 
 import (
+	"fmt"
 	"log"
 	"tebu-discord/database/controller/save"
-	"tebu-discord/database/models"
+	"tebu-discord/pkg/dialog"
+	"tebu-discord/pkg/timer"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -11,39 +13,39 @@ import (
 
 var (
 	progress uint8
+	dialogs  = dialog.GetDialog("./questText/quest_000.json")
 )
 
 func GenerateQuest0(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
-			Content: "Game started!",
+			Content: "Game started!!\n **Remember: read the prompt and the button text**",
 			Flags:   discordgo.MessageFlagsEphemeral,
 		},
 	})
 
+	paragraph := dialogs[0].DialogText[0]
 	time.Sleep(time.Second * 1) // Value I found to be long enough to start quest but on to long
 	msg, err := s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
 		Flags:   discordgo.MessageFlagsEphemeral,
-		Content: "All of a sudden, a bright blue light comes shinning at your eyes, illuminating a canvas of clouds that dance in the skies to the most beautiful melody. The air hums in nature's sweet symphony, you catch the invigorating scent of fresh grass.",
+		Content: paragraph,
 	})
 	if err != nil {
 		log.Fatalf("Error creating follow up messsage: %v", err)
 	}
 
-	time.Sleep(time.Second * 1)
+	time.Sleep(timer.GenerateQuestTime(paragraph))
 
-	paragraph2 := "All of a sudden, a bright blue light comes shinning at your eyes, illuminating a canvas of clouds that dance in the skies to the most beautiful melody. The air hums in nature's sweet symphony, you catch the invigorating scent of fresh grass.\nGetting up, the landscape unfolds before you, a vast expanse of lush green plains stretching beyond the horizon. The world flares out like a blank sheet of paper, inviting you to explore its mysteries and secrets."
+	paragraph = dialogs[1].DialogText[0]
 
 	s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
-		Content: &paragraph2,
+		Content: &paragraph,
 	})
-
-	time.Sleep(time.Second * 1)
+	time.Sleep(timer.GenerateQuestTime(paragraph))
 
 	s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
 		Flags: discordgo.MessageFlagsEphemeral,
@@ -51,7 +53,11 @@ func GenerateQuest0(
 			discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{
 					discordgo.Button{
-						Label:    "Explore",
+						Label: "Explore",
+						Style: discordgo.SuccessButton,
+						Emoji: discordgo.ComponentEmoji{
+							Name: "🌳",
+						},
 						CustomID: "quest0_Button",
 					},
 				},
@@ -63,7 +69,6 @@ func GenerateQuest0(
 func ButtonQuest0(
 	s *discordgo.Session,
 	i *discordgo.InteractionCreate,
-	playerSave ...*models.PlayerSave,
 ) {
 	var (
 		label    string
@@ -73,27 +78,30 @@ func ButtonQuest0(
 
 	cloudSave, err := save.GetSave(i.User.ID)
 	if err != nil {
-
+		fmt.Printf("Unable to get save %s\n", err)
 	}
-	progress++
+	progress++ // We need to sync this with the db
+	cloudSave.Progress.Quest.QuestProgress = progress
 	switch progress {
 	case 1:
-		label = "Explore"
-		content = "You run towards the sun, but all you find is an endless sea of grass"
+		// The 0ith and 1th is used in the function above
+		label = dialogs[2].ButtonLabel[0]
+		content = dialogs[2].DialogText[0]
 	case 2:
-		label = "Explore"
-		content = "Nothing new seems to appear at your sight"
+		label = dialogs[3].ButtonLabel[0]
+		content = dialogs[3].DialogText[0]
 	case 3:
-		label = "Explore"
-		content = "Wind rattles and shakes the vegetation around you, very far something different catches your attention"
+		label = dialogs[4].ButtonLabel[0]
+		content = dialogs[4].DialogText[0]
 	case 4:
-		label = "Climb tree"
-		content = "A majestic tall tree, rooted to the ever so green grass, you notice rocks shattered within it's roots, while fungi grows within the gap of the base of the tree and the soil."
+		label = dialogs[5].ButtonLabel[0]
+		content = dialogs[5].DialogText[0]
 	case 5:
-		label = "Climb down"
-		content = "Scalling the towering tree, in a distance, you see other lonely trees, none as tall as the one you are in. The shrub land seemed to be getting denser the further away you look"
+		label = dialogs[6].ButtonLabel[0]
+		content = dialogs[6].DialogText[0]
 
 		cloudSave.Progress.Quest.QuestNumber = 1
+		cloudSave.Progress.Quest.QuestProgress = 0
 		save.UpdateSave(cloudSave)
 
 		customID = "quest_generate"
@@ -109,8 +117,11 @@ func ButtonQuest0(
 			Flags:   discordgo.MessageFlagsEphemeral,
 			Components: []discordgo.MessageComponent{&discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{discordgo.Button{
-					Label:    label,
-					Style:    discordgo.PrimaryButton,
+					Label: label,
+					Style: discordgo.PrimaryButton,
+					Emoji: discordgo.ComponentEmoji{
+						Name: "🌳",
+					},
 					CustomID: customID,
 				}},
 			}},

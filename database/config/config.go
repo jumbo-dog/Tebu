@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	helper "tebu-discord/internal/helper/env"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -18,7 +18,9 @@ var (
 
 func ConnectDatabase() {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	opts := options.Client().ApplyURI("mongodb+srv://" + helper.GetEnvValue("DATABASE_LOGIN", "../../.env") + ":" + helper.GetEnvValue("DATABASE_PASSWORD", "../../.env") + "@cluster0.iwwx7zx.mongodb.net/?retryWrites=true&w=majority").SetServerAPIOptions(serverAPI)
+	opts := options.Client().
+		ApplyURI("mongodb+srv://" + os.Getenv("DATABASE_LOGIN") + ":" + os.Getenv("DATABASE_PASSWORD") + "@cluster0.iwwx7zx.mongodb.net/?retryWrites=true&w=majority").
+		SetServerAPIOptions(serverAPI)
 	client, err = mongo.Connect(context.TODO(), opts)
 	if err != nil {
 		log.Fatalf("Error connecting to mongo: %s", err)

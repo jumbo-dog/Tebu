@@ -1,0 +1,42 @@
+[
+    {
+        "dialog_text": [
+            "As you step into the dimly lit depths of the forest, a sense of unease washes over you. The eerie silence is occasionally interrupted by the faint rustling of leaves and the crackling of twigs underfoot."
+        ]
+    },
+    {
+        "dialog_text": [
+            "With each step, the undergrowth thickens, obscuring your path and heightening your apprehension."
+        ]
+    },
+    {
+        "dialog_text": [
+            "A sudden rustle in the bushes ahead shatters the tranquility, sending a shiver down your spine."
+        ],
+        "button_label" : [
+            "init_attack"
+        ]
+    },
+    {
+        "dialog_text": [
+            "Pressing onward, you delve deeper into the wilderness, the encroaching shadows a constant reminder of the dangers lurking in the darkness."
+        ],
+        "button_label" : [
+            "explore"
+        ]
+    },
+    {
+        "dialog_text": [
+            "And then, amidst the twisted roots and ancient trees, you stumble upon an ancient archway—a gateway to realms unknown."
+        ]
+    },
+    {
+        "dialog_text": [
+            "With a mixture of trepidation and curiosity, you cross the threshold, knowing that within the depths of the dungeon await both mysteries untold and perils unimagined."
+        ]
+    }
+
+   
+]
+
+    
