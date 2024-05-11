@@ -2,6 +2,8 @@
 
 Discord based game!
 
+*Made by [leo5123](https://github.com/leo5123) and [RyanQueirozS](https://github.com/RyanQueirozS).*
+
 ## Tech
 
 - Skaffold
